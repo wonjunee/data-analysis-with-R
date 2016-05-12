@@ -1,0 +1,47 @@
+Problem Set 1
+==================================
+## loading diamonds data set
+```{r}
+library(ggplot2)
+data(diamonds)
+summary(diamonds)
+length(diamonds$price)
+names(diamonds)
+ggplot(aes(x = price), data=diamonds) +
+  geom_histogram()
+?diamonds
+summary(diamonds$price<500)
+summary(diamonds$price<250)
+summary(diamonds$price>=15000)
+```
+
+## Cheaper Diamonds
+```{r}
+ggplot(aes(x=price),data=diamonds) +
+  geom_histogram( breaks=seq(0,20000,200)) +
+  facet_wrap(~cut)
+```
+
+## Price per Carat by Cut
+```{r}
+ggplot(aes(x=price),data=diamonds) +
+  geom_histogram( breaks=seq(0,20000,200)) +
+  scale_x_log10()
+  facet_wrap(~cut)
+```
+
+## Price Box Plots
+```{r}
+ggplot(aes(x=cut, y=price),data=diamonds) +
+  geom_boxplot()
+ggplot(aes(x=clarity, y=price),data=diamonds) +
+  geom_boxplot()
+ggplot(aes(x=color, y=price),data=diamonds) +
+  geom_boxplot()
+```
+## Interquartile Range
+```{r}
+subset(by(diamonds$price, diamonds$carat, length),by(diamonds$price, diamonds$carat, length)>2000)
+```
+
+
