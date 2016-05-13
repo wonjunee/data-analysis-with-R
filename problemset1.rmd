@@ -2,6 +2,7 @@ Problem Set 1
 ==================================
 ## loading diamonds data set
 ```{r}
+install.packages(ggplot2)
 library(ggplot2)
 data(diamonds)
 summary(diamonds)
@@ -42,6 +43,14 @@ ggplot(aes(x=color, y=price),data=diamonds) +
 ## Interquartile Range
 ```{r}
 subset(by(diamonds$price, diamonds$carat, length),by(diamonds$price, diamonds$carat, length)>2000)
+```
+## How many people sharing my birthday
+```{r}
+pf <- read.csv('C:/users/WONJUN/dropbox/private/study/udacity/R_project/pseudo_facebook.tsv', sep='\t')
+names(pf)
+
+myBirthday <- subset(pf, dob_day == 24 & dob_month == 2)
+summary(myBirthday)
 ```
 
 
