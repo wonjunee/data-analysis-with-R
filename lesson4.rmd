@@ -1,0 +1,22 @@
+---
+title: "lesson4"
+author: "Wonjun Lee"
+date: "May 13, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scatter Plots
+```{r}
+library(ggplot2)
+pf <- read.csv('c:/users/wlee/dropbox/private/study/udacity/r_project/pseudo_facebook.tsv', sep = '\t')
+names(pf)
+
+ggplot(aes(x=age, y = friend_count), data = pf) +
+  geom_jitter(alpha = 1/20) +
+  xlim(13, 90)
+```
+
