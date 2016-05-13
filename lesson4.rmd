@@ -16,7 +16,27 @@ pf <- read.csv('c:/users/wlee/dropbox/private/study/udacity/r_project/pseudo_fac
 names(pf)
 
 ggplot(aes(x=age, y = friend_count), data = pf) +
-  geom_jitter(alpha = 1/20) +
+  geom_point(alpha = 1/20, position = position_jitter(h = 0)) +
+  coord_trans(y = "sqrt") +
   xlim(13, 90)
+  
+```
+
+## Alpha and Jitter
+```{r}
+names(pf)
+ggplot(aes(x=age, y = friendships_initiated), data = pf) +
+  geom_point(alpha = 1/20, position = position_jitter(h=0)) +
+  xlim(13, 90) +
+  coord_trans(y = "sqrt")
+```
+
+## Conditional Means
+```{r}
+install.packages('dplyr')
+library(dplyr)
+
+
+
 ```
 
