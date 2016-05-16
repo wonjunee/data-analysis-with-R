@@ -1,0 +1,68 @@
+Problemset 2 - Final Problem
+=================================================
+
+## Importing Data
+```{r}
+pf <- read.csv('C:/users/wlee/dropbox/private/study/udacity/R_project/employment.csv',header = TRUE, sep=',')
+tail(pf)
+names(pf) <- c("country", 1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007)
+names(pf)
+pf$country <- factor(pf$country)
+pf <- pf[1:178,1:18]
+names(pf)
+summary(pf)
+```
+
+## Melt the dataset
+```{r}
+library(reshape2)
+pf_melt <- melt(pf,variable.name="year", value.name ="employmentRate")
+head(pf_melt)
+names(pf_melt)
+```
+
+## Finding the mean rate of each country throughout the years
+```{r}
+library(dplyr)
+library(ggplot2)
+
+country_mean <- pf_melt %>%
+  group_by(country) %>%
+  summarise(mean=mean(employmentRate)) %>%
+  arrange(mean)
+country_mean
+ggplot(aes(x=country,y=mean), data=country_mean) +
+  geom_bar(stat="identity")
+```
+
+## Maximum Mean
+```{r}
+tail(country_mean,1)
+```
+
+## Mean By Year
+```{r}
+year_mean <- pf_melt %>%
+  group_by(year) %>%
+  summarise(mean=mean(employmentRate))
+tail(year_mean)
+
+# Line Graph
+ggplot(aes(x=year,y=mean,group = 1), data=year_mean) +
+  geom_line()
+
+# Line Graph per Country
+pf_5_countries <- pf_melt %>%
+  filter(country %in% c("Albania","Algeria","Angola"))
+pf_5_coun
+ggplot(aes(x=year,y=employmentRate, group=country), data=pf_5_countries) +
+  geom_line(aes(color = country))
+
+# Box Plot
+ggplot(aes(x=year,y=employmentRate), data=pf_melt) +
+  geom_boxplot()
+
+
+  
+```
+
