@@ -1,0 +1,62 @@
+---
+title: "lesson5"
+author: "Wonjun Lee"
+date: "May 16, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scatter Plots
+```{r}
+library(ggplot2)
+pf <- read.csv('c:/users/wlee/dropbox/private/study/udacity/r_project/pseudo_facebook.tsv', sep = '\t')
+names(pf)
+
+ggplot(aes(x=age, y = friend_count), data = pf) +
+  geom_point(alpha = 1/20, position = position_jitter(h = 0)) +
+  coord_trans(y = "sqrt") +
+  xlim(13, 90)
+  
+```
+
+## Friends count by age and gender
+```{r}
+pf.fc_by_age_gender <- pf %>%
+    group_by(age,gender) %>%
+    summarise(mean_friend_count=mean(friend_count), median_friend_count=median(friend_count),n=n())
+```
+
+## Create a line
+```{r}
+names(pf.fc_by_age_gender)
+pf.fc_by_age_gender <-subset(pf.fc_by_age_gender,pf.fc_by_age_gender$gender %in% c("female","male"))
+ggplot(aes(x=age,y=median_friend_count),data=pf.fc_by_age_gender) +
+  geom_line(aes(color=gender))
+```
+
+## Reshaping Data
+```{r}
+install.packages('reshape2')
+library(reshape2)
+
+pf.fc_by_age_gender.wide <- dcast(pf.fc_by_age_gender,
+                                  age ~ gender,
+                                  value.var = 'median_friend_count')
+
+pf.fc_by_age_gender.wide[,"ratio"] <- pf.fc_by_age_gender.wide$female/pf.fc_by_age_gender.wide$male
+
+ggplot(aes(x=age,y=ratio),data=pf.fc_by_age_gender.wide) +
+  geom_line() + 
+  geom_hline(yintercept=1,alpha=0.3,linetype=2)
+```
+
+## Tenure
+```{r}
+pf$year_joined <- floor(2014 - pf$tenure/365)
+
+```
+
+
