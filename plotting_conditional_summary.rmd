@@ -77,5 +77,8 @@ ggplot(aes(x=age, y = friend_count), data = subset(pf, !is.na(year_joined.bucket
 ggplot(aes(x=age, y = friend_count), data = subset(pf, !is.na(year_joined.bucket)))+ 
   geom_line(aes(color=year_joined.bucket), stat='summary', fun.y=mean) +
   geom_line(stat='summary', fun.y=mean, linetype = 2)
+
+with(subset(pf, tenure>=1), summary(friend_count/tenure))
+
 ```
 
