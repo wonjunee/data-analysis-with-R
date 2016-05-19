@@ -6,29 +6,22 @@ Notes:
 
 ***
 
+
+### Importing data
+```{r}
+library(ggplot2)
+data(diamonds)
+names(diamonds)
+```
+
 ### Scatterplot Review
 
 ```{r Scatterplot Review}
-
+ggplot(aes(x=carat,y=price), data=diamonds) +
+  scale_x_continuous(lim=c(0,quantile(diamonds$carat,0.99))) +
+  scale_y_continuous(lim=c(0,quantile(diamonds$price,0.99))) +
+  geom_point(fill=I('#F79420'),color=I('black'),shape=21)
 ```
-
-***
-
-### Price and Carat Relationship
-Response:
-
-***
-
-### Frances Gerety
-Notes:
-
-#### A diamonds is
-
-
-***
-
-### The Rise of Diamonds
-Notes:
 
 ***
 
@@ -57,11 +50,6 @@ set.seed(20022012)
 diamond_samp <- diamonds[sample(1:length(diamonds$price), 10000), ]
 ggpairs(diamond_samp, params = c(shape = I('.'), outlier.shape = I('.')))
 ```
-
-What are some things you notice in the ggpairs output?
-Response:
-
-***
 
 ### The Demand of Diamonds
 Notes:
