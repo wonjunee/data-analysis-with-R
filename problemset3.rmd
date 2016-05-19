@@ -1,0 +1,43 @@
+Problem Set 2
+=====================================
+
+## Importing Data
+```{r}
+#install.packages(ggplot2)
+library(ggplot2)
+data(diamonds)
+
+names(diamonds)
+str(diamonds)
+```
+
+## Plotting
+```{r}
+ggplot(aes(x=price), data = diamonds) +
+  geom_histogram(aes(color=cut)) +
+  scale_color_brewer(type='qual') +
+  scale_x_log10() +
+  facet_grid(~color)
+```
+
+## Price vs. Table Colored By Cut
+```{r}
+str(diamonds)
+
+ggplot(aes(x=table,y=price), data = diamonds) +
+  geom_point(aes(color=cut)) +
+  scale_color_brewer(type='qual') +
+  scale_x_continuous(limits=c(50,80),breaks=seq(50,80,2))
+  
+```
+
+## Price vs. Volume
+```{r}
+ggplot(aes(x=x*y*z,y=price), data = diamonds) +
+  geom_point(aes(color=cut)) +
+  scale_color_brewer(type='qual') +
+  scale_x_continuous(limits=c(0,350),breaks=seq(0,350,100)) +
+  scale_y_log10()
+```
+
+
