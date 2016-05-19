@@ -55,7 +55,16 @@ ggpairs(diamond_samp, params = c(shape = I('.'), outlier.shape = I('.')))
 Notes:
 
 ```{r The Demand of Diamonds}
+library(gridExtra)
 
+plot1 <- qplot(x=price, data=diamonds) + 
+  ggtitle('Price')
+
+plot2 <- qplot(x=price, data=diamonds) +
+  ggtitle('Price (log10)') +
+  scale_x_log10()
+
+grid.arrange(plot1,plot2,ncol=2)
 ```
 
 ***
@@ -95,13 +104,15 @@ ggplot(aes(carat, price), data = diamonds) +
 ### Overplotting Revisited
 
 ```{r Sort and Head Tables}
-
+head(sort(table(diamonds$carat), decreasing=TRUE))
+head(sort(table(diamonds$price), decreasing=T))
+table(diamonds$price)
 ```
 
 
 ```{r Overplotting Revisited}
 ggplot(aes(carat, price), data = diamonds) + 
-  geom_point() + 
+  geom_point(aes(alpha=1/2,size=3/4,position='jitter')) + 
   scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
                      breaks = c(0.2, 0.5, 1, 2, 3)) + 
   scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
