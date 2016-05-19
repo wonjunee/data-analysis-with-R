@@ -11,8 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Scatter Plots
 ```{r}
+install.packages(ggplot2)
 library(ggplot2)
 pf <- read.csv('c:/users/wlee/dropbox/private/study/udacity/r_project/pseudo_facebook.tsv', sep = '\t')
+pf <- read.csv('c:/users/YURI/documents/wonjunee/udacity/data-analysis-with-R/pseudo_facebook.tsv', sep = '\t')
 names(pf)
 
 ggplot(aes(x=age, y = friend_count), data = pf) +
@@ -79,6 +81,16 @@ ggplot(aes(x=age, y = friend_count), data = subset(pf, !is.na(year_joined.bucket
   geom_line(stat='summary', fun.y=mean, linetype = 2)
 
 with(subset(pf, tenure>=1), summary(friend_count/tenure))
+
+ggplot(aes(x=tenure,y=friendships_initiated/tenure), data=subset(pf,tenure>=1)) +
+  geom_line(aes(color=year_joined.bucket), stat='summary', fun.y=mean)
+
+```
+
+## Smoothing graphs
+```{r}
+ggplot(aes(x=tenure,y=friendships_initiated/tenure), data=subset(pf,tenure>=1)) +
+  geom_smooth(aes(color=year_joined.bucket))
 
 ```
 
