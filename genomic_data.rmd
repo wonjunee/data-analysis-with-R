@@ -1,0 +1,28 @@
+Analyzing Genomic Data
+=================================
+
+## Importing the data
+```{r}
+nci <- read.table('c:/users/wlee/dropbox/private/study/udacity/r_project/nci.tsv')
+
+names(nci)
+```
+
+## melt the data to long format
+```{r}
+library(reshape2)
+nci.long.samp <- melt(as.matrix(nci[1:200,]))
+names(nci.long.samp) <- c("gene","case","value")
+head(nci.long.samp)
+```
+
+
+## Create a Heat Map!
+```{r}
+ggplot(aes(y=gene,x=case, fill = value),
+       data = nci.long.samp) +
+  geom_tile() +
+  scale_fill_gradientn(colours=colorRampPalette(c('blue','red'))(100))
+```
+
+
