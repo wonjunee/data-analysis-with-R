@@ -1,0 +1,42 @@
+## Import Yogurt Data
+```{r}
+pf <- read.csv('c:/users/YURI/documents/wonjunee/udacity/data-analysis-with-R/pseudo_facebook.tsv', sep = '\t')
+
+yo <- read.csv('c:/users/YURI/documents/wonjunee/udacity/data-analysis-with-R/yogurt.csv', sep = ',')
+
+```
+
+## Adding columns
+```{r}
+install.packages(dplyr)
+library(dplyr)
+pf.fc_by_age_gender <- pf %>%
+    group_by(age,gender) %>%
+    summarise(mean_friend_count=mean(friend_count), median_friend_count=median(friend_count),n=n())
+
+pf.fc_by_age_gender <-subset(pf.fc_by_age_gender,!is.na(pf.fc_by_age_gender$gender))
+
+names(df)
+```
+
+## Histograms
+```{r}
+ggplot(aes(x=price), data=yo) +
+  geom_histogram(aes(fill=I('#F79420')))
+
+ggplot(aes(x=price), data=yo) +
+  geom_histogram(binwidth=10,aes(fill=I('#F79420')))
+```
+
+## Number of Purchases
+```{r}
+summary(yo)
+length(unique(yo$price))
+table(yo$price)
+str(yo)
+yo <-transform(yo, all.purchases = strawberry+blueberry+pina.colada+plain+mixed.berry)
+
+yo$all.purchases
+
+```
+
