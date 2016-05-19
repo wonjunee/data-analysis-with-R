@@ -1,9 +1,10 @@
 ## Import Yogurt Data
 ```{r}
 pf <- read.csv('c:/users/YURI/documents/wonjunee/udacity/data-analysis-with-R/pseudo_facebook.tsv', sep = '\t')
+pf <- read.csv('c:/users/wlee/dropbox/private/study/udacity/r_project/pseudo_facebook.tsv', sep = '\t')
 
 yo <- read.csv('c:/users/YURI/documents/wonjunee/udacity/data-analysis-with-R/yogurt.csv', sep = ',')
-
+yo <- read.csv('c:/users/wlee/dropbox/private/study/udacity/r_project/yogurt.csv', sep = ',')
 ```
 
 ## Adding columns
@@ -16,11 +17,12 @@ pf.fc_by_age_gender <- pf %>%
 
 pf.fc_by_age_gender <-subset(pf.fc_by_age_gender,!is.na(pf.fc_by_age_gender$gender))
 
-names(df)
+names(pf)
 ```
 
 ## Histograms
 ```{r}
+library(ggplot2)
 ggplot(aes(x=price), data=yo) +
   geom_histogram(aes(fill=I('#F79420')))
 
@@ -54,10 +56,30 @@ ggplot(aes(x=time,y=price), data=yo) +
 
 ## Looking at Samples of Households
 ```{r}
-set.seed(4230)
-sample.ids <- sample(levels(yo$id), 16)
+set.seed(4000)
+yo$id
+sample.ids <- sample(yo$id, 16)
+sample.ids
+ggplot(aes(x=time,y=price),
+       data=subset(yo,id %in% sample.ids)) +
+  facet_wrap(~id) +
+  geom_line() +
+  geom_point(aes(size=all.purchases), pch = 1)
+  
+# Need to analyze more and upload it to a discussion board.
+```
 
+## Scatterplot Matrices
+```{r}
+install.packages("GGally")
+library(GGally)
+theme_set(theme_minimal(20))
 
+# set the seed for reproducible results
+set.seed(1836)
+pf_subset <- pf[, c(2:15)]
+names(pf_subset)
+ggpairs(pf_subset[sample.int(nrow(pf_subset),1000),])
 
 ```
 
