@@ -40,3 +40,25 @@ yo$all.purchases
 
 ```
 
+## Histogram
+```{r}
+ggplot(aes(x=all.purchases), data=yo) +
+  geom_histogram(binwidth=1, aes(fill=I('#099DD9')))
+```
+
+## Prices over Time Solution
+```{r}
+ggplot(aes(x=time,y=price), data=yo) +
+  geom_jitter(alpha=1/4, shape=21, fill=I('#F79420'))
+```
+
+## Looking at Samples of Households
+```{r}
+set.seed(4230)
+sample.ids <- sample(levels(yo$id), 16)
+
+
+
+```
+
+
