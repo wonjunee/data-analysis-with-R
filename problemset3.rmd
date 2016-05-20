@@ -40,4 +40,46 @@ ggplot(aes(x=x*y*z,y=price), data = diamonds) +
   scale_y_log10()
 ```
 
+## Proportion of Friendships Initiated
+```{r}
+pf <- read.delim("c:/users/wlee/dropbox/private/study/udacity/R_project/pseudo_facebook.tsv")
+names(pf)
+
+pf$prop_initiated <- pf$friendships_initiated/pf$friend_count
+
+
+pf <- pf %>% mutate(prop_initiated = ifelse(friend_count==0,0,friendships_initiated/friend_count))
+pf$prop_initiated
+```
+
+## prop_initiated vs. tenure (CUTTING VARIABLE)
+```{r}
+pf$year_joined <- floor(2014 - pf$tenure/365)
+pf$year_joined.bucket <- cut(pf$year_joined, c(2004, 2009, 2011, 2012, 2014))
+
+ggplot(aes(x=tenure, y=prop_initiated), data=pf) +
+  geom_line(aes(color=year_joined.bucket), stat='summary', fun.y=mean) +
+  geom_smooth()
+
+```
+
+
+## Statistics
+```{r}
+summary(subset(pf,pf$year_joined>2012))
+```
+
+## Price/Carat Binned, Faceted, & Colored
+```{r}
+names(diamonds)
+theme_set(theme_minimal())
+ggplot(aes(x=cut,y=price/carat,color=color),data=diamonds) +
+  geom_jitter() +
+  facet_wrap(~clarity,ncol=3) +
+  scale_color_brewer(type = 'div')
+```
+
+
+
+
 
