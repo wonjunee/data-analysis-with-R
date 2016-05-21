@@ -39,6 +39,7 @@ ggplot(aes(x=X), data=df) +
 ```{r}
 ggplot(aes(x=fixed.acidity), data=df) +
   geom_histogram()
+
 ```
 
 ### volatile.acidity
@@ -53,6 +54,20 @@ ggplot(aes(x=citric.acid), data=df) +
   geom_histogram()
 ```
 
+It looks right skewed graph but more thorough analysis will be helpful.
+
+```{r}
+ggplot(aes(x=citric.acid), data=df) +
+  geom_histogram(binwidth = .01)
+
+ggplot(aes(x=fixed.acidity), data=df) +
+  geom_histogram(binwidth = 0.01) +
+  scale_x_log10()
+```
+
+After log10 is applied to citric acid, The data clearly shows a normal distribution.
+
+
 ### Residual Sugar
 ```{r}
 ggplot(aes(x=residual.sugar), data=df) +
@@ -63,6 +78,12 @@ ggplot(aes(x=residual.sugar), data=df) +
 ```{r}
 ggplot(aes(x=chlorides), data=df) +
   geom_histogram()
+
+ggplot(aes(x=chlorides), data=df) +
+  geom_histogram() +
+  scale_x_log10()
+
+
 ```
 
 ### Free Sulfur Dioxide
