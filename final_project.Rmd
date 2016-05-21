@@ -1,4 +1,4 @@
-TITLE by YOUR_NAME_HERE
+Final Project by Wonjun Lee
 ========================================================
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
@@ -14,13 +14,63 @@ library(ggplot2)
 
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
-
+df <- read.csv("c:/users/WONJUN/dropbox/private/study/udacity/r_project/wineQualityReds.csv")
+names(df)
 ```
 
 # Univariate Plots Section
 ```{r echo=FALSE, Univariate_Plots}
+dim(df)
+summary(df)
+str(df)
 
 ```
+
+There are 13 variables with 1599 observations.
+Plotting a histogram for each variable will be helpful in understanding the data set.
+
+### X
+```{r}
+ggplot(aes(x=X), data=df) +
+  geom_histogram()
+```
+
+### Fixed Acidity
+```{r}
+ggplot(aes(x=fixed.acidity), data=df) +
+  geom_histogram()
+```
+
+### volatile.acidity
+```{r}
+ggplot(aes(x=volatile.acidity), data=df) +
+  geom_histogram()
+```
+
+### Citirc Acidity
+```{r}
+ggplot(aes(x=citric.acid), data=df) +
+  geom_histogram()
+```
+
+### Residual Sugar
+```{r}
+ggplot(aes(x=residual.sugar), data=df) +
+  geom_histogram()
+```
+
+### Chlorides
+```{r}
+ggplot(aes(x=chlorides), data=df) +
+  geom_histogram()
+```
+
+### Free Sulfur Dioxide
+```{r}
+ggplot(aes(x=free.sulfur.dioxide), data=df) +
+  geom_histogram()
+```
+
 
 # Univariate Analysis
 
