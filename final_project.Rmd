@@ -71,6 +71,36 @@ ggplot(aes(x=free.sulfur.dioxide), data=df) +
   geom_histogram()
 ```
 
+### Density
+```{r}
+ggplot(aes(x=density), data=df) +
+  geom_histogram()
+```
+
+### pH
+```{r}
+ggplot(aes(x=pH), data=df) +
+  geom_histogram()
+```
+
+### Sulphates
+```{r}
+ggplot(aes(x=sulphates), data=df) +
+  geom_histogram()
+```
+
+### Alcohol
+```{r}
+ggplot(aes(x=alcohol), data=df) +
+  geom_histogram()
+```
+
+### Quality
+```{r}
+ggplot(aes(x=quality), data=df) +
+  geom_histogram()
+```
+
 
 # Univariate Analysis
 
