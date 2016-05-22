@@ -29,26 +29,22 @@ str(df)
 There are 13 variables with 1599 observations.
 Plotting a histogram for each variable will be helpful in understanding the data set.
 
-### X
-```{r}
-ggplot(aes(x=X), data=df) +
-  geom_histogram()
-```
-
 ### Fixed Acidity
 ```{r}
 ggplot(aes(x=fixed.acidity), data=df) +
   geom_histogram()
 
+ggplot(aes(x=fixed.acidity), data=df) +
+  geom_histogram(binwidth=.1)
 ```
 
-### volatile.acidity
+### Volatile Acidity
 ```{r}
 ggplot(aes(x=volatile.acidity), data=df) +
   geom_histogram()
 ```
 
-### Citirc Acidity
+### Citric Acidity
 ```{r}
 ggplot(aes(x=citric.acid), data=df) +
   geom_histogram()
@@ -58,44 +54,72 @@ It looks right skewed graph but more thorough analysis will be helpful.
 
 ```{r}
 ggplot(aes(x=citric.acid), data=df) +
-  geom_histogram(binwidth = .01)
+  geom_histogram(bins=100)
+```
 
-ggplot(aes(x=fixed.acidity), data=df) +
-  geom_histogram(binwidth = 0.01) +
+This is very intersting graph because there are huge count at 0.00 and 0.50. More analysis might reveal interesting things.
+
+```{r}
+ggplot(aes(x=citric.acid), data=df) +
+  geom_histogram() +
   scale_x_log10()
 ```
 
-After log10 is applied to citric acid, The data clearly shows a normal distribution.
-
+After log10 is applied to citric acid, there are still many gabs before .10.
 
 ### Residual Sugar
 ```{r}
 ggplot(aes(x=residual.sugar), data=df) +
-  geom_histogram()
+  geom_histogram(bins=50)
 ```
+
+The graph has many outliers after 10. Using subset, anything above 10 is excluded and graphed again.
+
+```{r}
+ggplot(aes(x=residual.sugar), data=subset(df,residual.sugar<10)) +
+  geom_histogram(bins=100)
+```
+
+Still the graph is right skewed.
 
 ### Chlorides
 ```{r}
 ggplot(aes(x=chlorides), data=df) +
-  geom_histogram()
-
-ggplot(aes(x=chlorides), data=df) +
-  geom_histogram() +
-  scale_x_log10()
-
-
+  geom_histogram(bins=100)
 ```
+
+This variable also has many outliers after 0.25.
+Such outliers are taken out.
+
+```{r}
+ggplot(aes(x=chlorides), data=subset(df,chlorides<.25)) +
+  geom_histogram(bins=100)
+```
+
+Most of the chlorides are between .05 and .10.
+
+```{r}
+#install.packages("dplyr")
+library(dplyr)
+
+dim(df)
+df %>%
+  filter(chlorides>.15) %>%
+  summarise(n=n())
+```
+
+There are total 1599 observations and only 67 observations that are larger than .15.
 
 ### Free Sulfur Dioxide
 ```{r}
 ggplot(aes(x=free.sulfur.dioxide), data=df) +
-  geom_histogram()
+  geom_histogram(bins=100)
 ```
 
 ### Density
 ```{r}
 ggplot(aes(x=density), data=df) +
-  geom_histogram()
+  geom_histogram(bins=100)
 ```
 
 ### pH
@@ -113,7 +137,7 @@ ggplot(aes(x=sulphates), data=df) +
 ### Alcohol
 ```{r}
 ggplot(aes(x=alcohol), data=df) +
-  geom_histogram()
+  geom_histogram(binwidth=.1) 
 ```
 
 ### Quality
@@ -123,13 +147,52 @@ ggplot(aes(x=quality), data=df) +
 ```
 
 
+### More graphs with density and quality
+I got interested in the relationship between the density and the quality.
+```{r}
+ggplot(aes(x=density),data=df) +
+  geom_histogram() +
+  facet_wrap(~quality)
+```
+
+```{r}
+table(df$quality)
+```
+
+Facet wrap shows that most of wines have qualities of 5 and 6.
+The summary shows that there are not many quality of 3 and 8.
+However, regardless of the quality of the wine, the density is usually .996.
+
+```{r}
+df %>%
+  group_by(quality) %>%
+  summarise(mean=mean(density))
+
+str(df)
+```
+
+The means are very close to each other.
+
+
 # Univariate Analysis
 
 ### What is the structure of your dataset?
+There are 1599 observations and 13 variables.
+```{r}
+str(df)
+```
+Quality is the only ordered factor variable with the following levels.
+```{r}
+table(df$quality)
+```
 
 ### What is/are the main feature(s) of interest in your dataset?
+I am interested in finding which variable affects the quality the most.
+Then I will find the value of each variable that defines the best quality of wines.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+Density is already checked and density shows the similar pattern regardless of the quality. So other variables have to be analyzed.
+
 
 ### Did you create any new variables from existing variables in the dataset?
 
