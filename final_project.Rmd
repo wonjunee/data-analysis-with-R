@@ -14,7 +14,7 @@ library(ggplot2)
 
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
-df <- read.csv("c:/users/WONJUN/dropbox/private/study/udacity/r_project/wineQualityReds.csv")
+df <- read.csv("c:/users/wlee/dropbox/private/study/udacity/r_project/wineQualityReds.csv")
 names(df)
 ```
 
@@ -220,9 +220,13 @@ In a histogram for citric acid, there are two abnormal peaks at near 0.00 and ne
 
 # Bivariate Plots Section
 ```{r echo=FALSE, Bivariate_Plots}
+#install.packages('alr3')
+#install.packages('stats')
+library(alr3)
+library(stats)
 cor(df[,c(2:12,14)],method='pearson')
 
-install.packages('GGally')
+#install.packages('GGally')
 library(GGally)
 df_sample <- df[,c(2:14)]
 
@@ -237,7 +241,7 @@ First of all of acidic variables (fixed.acidity and citric.acid) are negatively 
 df$quality <- factor(df$quality,labels=c(3,4,5,6,7,8))
 
 str(df)
-ggplot(aes(x=pH,y=fixed.acidity,color=quality), data=df_sample) +
+ggplot(aes(x=pH,y=fixed.acidity), data=df_sample) +
   geom_point(alpha = 0.5, size = 2, position = 'jitter') +
   scale_fill_brewer(type = 'div')
 
@@ -249,7 +253,9 @@ ggplot(aes(x=pH,y=citric.acid),data=df_sample) +
 cor.test(df$pH, df$citric.acid)
 ```
 
+
 Density is positively correlated to fixed.acidity and citric.acid and negatively correlated to alcohol. 
+
 
 ```{r}
 ggplot(aes(x=density,y=fixed.acidity), data=df) +
@@ -257,7 +263,7 @@ ggplot(aes(x=density,y=fixed.acidity), data=df) +
 
 cor.test(df$density, df$fixed.acidity)
 
-ggplot(aes(x=density,y=citric.acid,color=quality), data=df) +
+ggplot(aes(x=density,y=citric.acid), data=df) +
   geom_point(alpha=0.5, size=2, position='jitter')
 cor.test(df$density, df$citric.acid)
 ```
