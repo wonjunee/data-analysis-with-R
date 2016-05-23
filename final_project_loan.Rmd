@@ -14,7 +14,7 @@ suppressMessages(library(ggplot2))
 
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
-df <- read.csv("c:/udacity/r_project/prosperLoanData.csv")
+df <- read.csv("c:/udacity/data-analysis-with-R/prosperLoanData.csv")
 names(df)
 ```
 
@@ -297,7 +297,7 @@ After plotting many histograms from various variables, a consistent pattern can 
 
 
 # Bivariate Plots Section
-```{r echo=FALSE, Bivariate_Plots}
+```{r echo=FALSE, Bivariate_Plots, warning=FALSE, message=FALSE}
 #install.packages('RColorBrewer')
 #install.packages('alr3')
 #install.packages('stats')
@@ -307,12 +307,12 @@ library(stats)
 
 set.seed(20022012)
 df_samp <- df[sample(1:length(df$MonthlyLoanPayment), 500), ]
-
+neams
 df_samp <- df_samp[,c(5,6,9,13,16,31,50,64,68,84,85)]
 names(df_samp)
 
 #install.packages('GGally')
-suppressMessages(library(GGally))
+suppressWarnings(library(GGally))
 
 ggpairs(df_samp,
   lower = list(continuous = wrap("points", shape = I('.'))), 
@@ -435,8 +435,6 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid),
                      !is.na(CreditScoreRangeMid) &
                      CreditScoreRangeMid > 300)) +
   geom_jitter(alpha=.05, size=2)
-
-by(subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(CreditScoreRangeMid))$ratio_monthly_loan_payment, subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(CreditScoreRangeMid))$CreditScoreRangeMid, summary)
 ```
 
 People with good credit score tend to have a higher ratio.
@@ -444,6 +442,8 @@ People with good credit score tend to have a higher ratio.
 # Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+
+
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 
