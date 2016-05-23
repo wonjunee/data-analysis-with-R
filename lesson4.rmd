@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Scatter Plots
 ```{r}
 library(ggplot2)
-pf <- read.csv('c:/users/wlee/dropbox/private/study/udacity/r_project/pseudo_facebook.tsv', sep = '\t')
+pf <- read.csv('c:/users/WONJUN/dropbox/private/study/udacity/r_project/pseudo_facebook.tsv', sep = '\t')
 names(pf)
 
 ggplot(aes(x=age, y = friend_count), data = pf) +
@@ -33,7 +33,7 @@ ggplot(aes(x=age, y = friendships_initiated), data = pf) +
 
 ## Conditional Means
 ```{r}
-install.packages('dplyr')
+#install.packages('dplyr')
 library(dplyr)
 
 age_groups <- group_by(pf, age)
@@ -83,7 +83,7 @@ with(pf, cor.test(www_likes_received, likes_received, method = 'pearson'))
 
 ## Noisy Scatterplots
 ```{r}
-install.packages(alr3)
+#install.packages('alr3')
 library(alr3)
 data(Mitchell)
 
@@ -101,6 +101,3 @@ ggplot(data = Mitchell, aes(x = Month, y = Temp)) +
 ```{r}
 pf$age_with_months <- pf$age + (1-pf$dob_month/12)
 ```
-
-
-

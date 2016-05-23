@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 install.packages(ggplot2)
 library(ggplot2)
-pf <- read.csv('c:/users/wlee/dropbox/private/study/udacity/r_project/pseudo_facebook.tsv', sep = '\t')
+pf <- read.csv('c:/users/wonjun/dropbox/private/study/udacity/r_project/pseudo_facebook.tsv', sep = '\t')
 pf <- read.csv('c:/users/YURI/documents/wonjunee/udacity/data-analysis-with-R/pseudo_facebook.tsv', sep = '\t')
 names(pf)
 

@@ -187,22 +187,42 @@ table(df$quality)
 ```
 
 ### What is/are the main feature(s) of interest in your dataset?
+
 I am interested in finding which variable affects the quality the most.
 Then I will find the value of each variable that defines the best quality of wines.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
-Density is already checked and density shows the similar pattern regardless of the quality. So other variables have to be analyzed.
 
+Density is already checked and density shows the similar pattern regardless of the quality. So other variables have to be analyzed.
 
 ### Did you create any new variables from existing variables in the dataset?
 
+According to the description of the data set, the citric acid adds freshness to wines, residual sugar adds sweet and volatile acidity adds unpleasant taste to wines. I thought that ratio of the sum of citric acid and residual sugar to volatile acidity might be interesting so I created the ratio of interest as below.
+
+```{r}
+# Checking if there is any zero in volatile.acidity
+df %>%
+  filter(df$volatile.acidity == 0) %>%
+  summarise(n=n())
+
+# Creating New Variable
+df$ratio_interest <- (df$citric.acid + df$residual.sugar) / df$volatile.acidity
+
+# Graphing a histogram
+ggplot(aes(x=ratio_interest), data=df) +
+  geom_histogram(bins=100)
+```
+
 ### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
+When creating the new variable, since the variable is a fraction, the denominator has to be nonzero values. After checking with dplyr library, there is no zero in volatile acidity.
+
+In a histogram for citric acid, there are two abnormal peaks at near 0.00 and near 0.50. After applying log10, the left skewed graph can be observed. Fairly large number of observations are between 0.01 and 0.10 values and many gaps can be found in this interval. According to the data set description, citric acid is found in a small quantity. To fill the gap of the data, citric acid is added with residual sugar because both of these variables account for the pleasantness of wines.
 
 
 # Bivariate Plots Section
 ```{r echo=FALSE, Bivariate_Plots}
-
+cor(df[,c(2:12,14)],method='pearson')
 ```
 
 # Bivariate Analysis
