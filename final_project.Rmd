@@ -229,8 +229,6 @@ df_sample <- df[,c(2:14)]
 ggpairs(df_sample,
   lower = list(continuous = wrap("points", shape = I('.'))), 
   upper = list(combo = wrap("box", outlier.shape = I('.'))))
-
-names(df)
 ```
 
 First of all of acidic variables (fixed.acidity and citric.acid) are negatively correlated to pH. This is very reasonable because low pH value means high acidic value. 
@@ -259,11 +257,9 @@ ggplot(aes(x=density,y=fixed.acidity), data=df) +
 
 cor.test(df$density, df$fixed.acidity)
 
-ggplot(aes(x=density,y=citric.acid), data=df) +
+ggplot(aes(x=density,y=citric.acid,color=quality), data=df) +
   geom_point(alpha=0.5, size=2, position='jitter')
-
 cor.test(df$density, df$citric.acid)
-
 ```
 
 citric acid is not correlated to density as much as fixed acidity.
