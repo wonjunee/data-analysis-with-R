@@ -257,6 +257,14 @@ ggplot(aes(x=ratio_monthly_loan_payment), data=subset(df,ratio_monthly_loan_paym
 
 The above histogram is plotted with subset of the data set where ratio_monthly_loan_payment is less than 0.5. The right skewed graph can be seen clearly.
 
+
+### Original Loan Amount
+```{r}
+ggplot(aes(x=LoanOriginalAmount), data=df) +
+  geom_histogram(bins=10)
+```
+
+
 # Univariate Analysis
 
 ### What is the structure of your dataset?
@@ -275,84 +283,42 @@ I am interested in finding which variable affects the credit score. And I will f
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
-Density is already checked and density shows the similar pattern regardless of the quality. So other variables have to be analyzed.
+People have different interest rates, monthly income, monthly loan payment, etc. These variables might affect their capabilities of repaying their loans. And depending on their employment status, occupations and credit scores, their loan amount may be different. For instance, I am expecting that people with low credit scores will have higher interest rates.
 
 ### Did you create any new variables from existing variables in the dataset?
 
-According to the description of the data set, the citric acid adds freshness to wines, residual sugar adds sweet and volatile acidity adds unpleasant taste to wines. I thought that ratio of the sum of citric acid and residual sugar to volatile acidity might be interesting so I created the ratio of interest as below.
+I created several new variables: BorrowerAPR.bucket, EstimatedReturn.bucket, CreditScoreRangeMid and ratio_monthly_loan_payment. BorrowerAPR.bucket and EstimatedReturn.bucket are divided into intervals so that it can be used as factor variables. CreditScoreRangeMid is the average of CreditScoreRangeLower and CreditScoreRangeUpper. Ratio_monthly_loan_payment is the ratio of monthly loan to monthly income.  
 
-```{r}
-# Checking if there is any zero in volatile.acidity
-df %>%
-  filter(df$volatile.acidity == 0) %>%
-  summarise(n=n())
 
-# Creating New Variable
-df$ratio_interest <- (df$citric.acid + df$residual.sugar) / df$volatile.acidity
-
-# Graphing a histogram
-ggplot(aes(x=ratio_interest), data=df) +
-  geom_histogram(bins=100)
-```
 
 ### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
-When creating the new variable, since the variable is a fraction, the denominator has to be nonzero values. After checking with dplyr library, there is no zero in volatile acidity.
-
-In a histogram for citric acid, there are two abnormal peaks at near 0.00 and near 0.50. After applying log10, the left skewed graph can be observed. Fairly large number of observations are between 0.01 and 0.10 values and many gaps can be found in this interval. According to the data set description, citric acid is found in a small quantity. To fill the gap of the data, citric acid is added with residual sugar because both of these variables account for the pleasantness of wines.
+After plotting many histograms from various variables, a consistent pattern can be found in the histograms. Some of them have an unusually high peak at the right of the median. I cutted such variables into distinct intervals so that I can use them with multivariable analysis.
 
 
 # Bivariate Plots Section
 ```{r echo=FALSE, Bivariate_Plots}
+#install.packages('RColorBrewer')
 #install.packages('alr3')
 #install.packages('stats')
+library(RColorBrewer)
 library(alr3)
 library(stats)
-cor(df[,c(2:12,14)],method='pearson')
+cor(df,method='pearson')
+
+set.seed(20022012)
+df_samp <- df[sample(1:length(df$MonthlyLoanPayment), 10000), ]
+names(df_samp)
+df_samp <- df_samp[,c(5,6,9,13,16,18,19,20,31,50,64,68)]
 
 #install.packages('GGally')
 library(GGally)
-df_sample <- df[,c(2:14)]
 
-ggpairs(df_sample,
+ggpairs(df_samp,
   lower = list(continuous = wrap("points", shape = I('.'))), 
   upper = list(combo = wrap("box", outlier.shape = I('.'))))
 ```
 
-First of all of acidic variables (fixed.acidity and citric.acid) are negatively correlated to pH. This is very reasonable because low pH value means high acidic value. 
-
-```{r}
-df$quality <- factor(df$quality,labels=c(3,4,5,6,7,8))
-
-str(df)
-ggplot(aes(x=pH,y=fixed.acidity), data=df_sample) +
-  geom_point(alpha = 0.5, size = 2, position = 'jitter') +
-  scale_fill_brewer(type = 'div')
-
-cor.test(df$pH, df$fixed.acidity)
-
-ggplot(aes(x=pH,y=citric.acid),data=df_sample) +
-  geom_point(alpha=.5)
-
-cor.test(df$pH, df$citric.acid)
-```
-
-
-Density is positively correlated to fixed.acidity and citric.acid and negatively correlated to alcohol. 
-
-
-```{r}
-ggplot(aes(x=density,y=fixed.acidity), data=df) +
-  geom_point(alpha=0.5, size=2, position='jitter')
-
-cor.test(df$density, df$fixed.acidity)
-
-ggplot(aes(x=density,y=citric.acid), data=df) +
-  geom_point(alpha=0.5, size=2, position='jitter')
-cor.test(df$density, df$citric.acid)
-```
-
-citric acid is not correlated to density as much as fixed acidity.
 
 
 # Bivariate Analysis
