@@ -52,30 +52,32 @@ df$Term <- factor(df$Term)
 
 12, 36 and 60. Term will be used as a factored variable.
 
-### Borrower APR
-```{r}
-ggplot(aes(x=BorrowerAPR), data=df) +
-  geom_histogram(bins=30)
-```
-
-The histogram is not very clear. Narrower binwidth will be helpful.
-
+### Borrower Rate, Borrower APR, Lender Yield, EstimatedEffectiveYield
 ```{r}
 ggplot(aes(x=BorrowerAPR), data=df) +
   geom_histogram(bins=100)
+ggplot(aes(x=BorrowerRate), data=df) +
+  geom_histogram(bins=100)
+ggplot(aes(x=LenderYield), data=df) +
+  geom_histogram(bins=100)
+ggplot(aes(x=EstimatedEffectiveYield), data=df) +
+  geom_histogram(bins=100)
 ```
+
+The graphs are similar to each other. Right skewed graph with an abnormal peak at the right. I will only use Borrower Rate for convenience.
+
+### Borrower Rate
 
 Without the high peak around at .36 the histogram is almost a right skewed graph. According to the graph, there is a very popular APR near at .36. Let's find the exact value of it.
 
 ```{r}
 df %>%
-  group_by(BorrowerAPR) %>%
+  group_by(BorrowerRate) %>%
   summarise(Count=n()) %>%
   arrange(desc(Count))
 ```
 
-.35797 is the most popular APR being applied.
-It looks like too many of APR values are near .35.
+.3177 is the most popular APR being applied.
 Cutting the variable and using it as a factored variable might be more useful.
 
 ```{r}
@@ -83,83 +85,69 @@ df$BorrowerAPR.bucket <- cut(df$BorrowerAPR,breaks=10)
 table(df$BorrowerAPR.bucket)
 ```
 
-### Citric Acidity
+### Estimated Return
 ```{r}
-ggplot(aes(x=citric.acid), data=df) +
-  geom_histogram()
+ggplot(aes(x=EstimatedReturn), data=df) +
+  geom_histogram(bins=30)
 ```
 
-It looks right skewed graph but more thorough analysis will be helpful.
+This looks a right skewed graph with outliers less than 0.0.
 
 ```{r}
-ggplot(aes(x=citric.acid), data=df) +
+ggplot(aes(x=EstimatedReturn), data=df) +
   geom_histogram(bins=100)
 ```
 
-This is very intersting graph because there are huge count at 0.00 and 0.50. More analysis might reveal interesting things.
+The graph with more bins shows clear outliers with negative values and more than 0.2.
 
 ```{r}
-ggplot(aes(x=citric.acid), data=df) +
-  geom_histogram() +
-  scale_x_log10()
+summary(df$EstimatedReturn)
+
+df$EstimatedReturn.bucket <- cut(df$EstimatedReturn, c(-0.1,0,0.2,0.3))
+table(df$EstimatedReturn.bucket)
 ```
 
-After log10 is applied to citric acid, there are still many gabs before .10.
-
-### Residual Sugar
+There are 176 observations less than 0.0 and 80 observations more than 0.2.
 ```{r}
-ggplot(aes(x=residual.sugar), data=df) +
+ggplot(aes(x=EstimatedReturn), data=subset(df,df$EstimatedReturn>0 & df$EstimatedReturn<0.2)) +
   geom_histogram(bins=50)
+  scale_x_sqrt()
 ```
 
-The graph has many outliers after 10. Using subset, anything above 10 is excluded and graphed again.
+The graph is drawn after Estimated Return is filtered (more than 0 and less than 0.2). Similar to the previous variables, there is a peak at the right.
+
+### Prosper Score
+```{r}
+ggplot(aes(x=ProsperScore
+), data=df) +
+  geom_histogram(binwidth=.5)
+
+table(df$ProsperScore)
+```
+
+Prosper score is ranging from 1 to 11.
 
 ```{r}
-ggplot(aes(x=residual.sugar), data=subset(df,residual.sugar<10)) +
+df$ProsperScore <- factor(df$ProsperScore)
+```
+
+Prosper score is factored.
+
+### Employment Status Duration
+```{r}
+ggplot(aes(x=EmploymentStatusDuration), data=df) +
   geom_histogram(bins=100)
 ```
 
-Still the graph is right skewed.
-
-### Chlorides
-```{r}
-ggplot(aes(x=chlorides), data=df) +
-  geom_histogram(bins=100)
-```
-
-This variable also has many outliers after 0.25.
-Such outliers are taken out.
+This is very nice looking right skewed graph without a peak at the right.
 
 ```{r}
-ggplot(aes(x=chlorides), data=subset(df,chlorides<.25)) +
-  geom_histogram(bins=100)
+ggplot(aes(x=EmploymentStatusDuration), data=df) +
+  geom_histogram(bins=100) +
+  scale_x_sqrt()
 ```
 
-Most of the chlorides are between .05 and .10.
-
-```{r}
-#install.packages("dplyr")
-library(dplyr)
-
-dim(df)
-df %>%
-  filter(chlorides>.15) %>%
-  summarise(n=n())
-```
-
-There are total 1599 observations and only 67 observations that are larger than .15.
-
-### Free Sulfur Dioxide
-```{r}
-ggplot(aes(x=free.sulfur.dioxide), data=df) +
-  geom_histogram(bins=100)
-```
-
-### Density
-```{r}
-ggplot(aes(x=density), data=df) +
-  geom_histogram(bins=100)
-```
+Square root is applied. 
 
 ### pH
 ```{r}
