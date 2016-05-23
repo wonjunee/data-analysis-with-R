@@ -287,7 +287,7 @@ People have different interest rates, monthly income, monthly loan payment, etc.
 
 ### Did you create any new variables from existing variables in the dataset?
 
-I created several new variables: BorrowerAPR.bucket, EstimatedReturn.bucket, CreditScoreRangeMid and ratio_monthly_loan_payment. BorrowerAPR.bucket and EstimatedReturn.bucket are divided into intervals so that it can be used as factor variables. CreditScoreRangeMid is the average of CreditScoreRangeLower and CreditScoreRangeUpper. Ratio_monthly_loan_payment is the ratio of monthly loan to monthly income.  
+I created several new variables: BorrowerAPR.bucket, EstimatedReturn.bucket, CreditScoreRangeMid and ratio monthly loan payment. BorrowerAPR.bucket and EstimatedReturn.bucket are divided into intervals so that it can be used as factor variables. CreditScoreRangeMid is the average of CreditScoreRangeLower and CreditScoreRangeUpper. Ratio monthly loan payment is the ratio of monthly loan to monthly income.  
 
 
 
@@ -304,12 +304,12 @@ After plotting many histograms from various variables, a consistent pattern can 
 library(RColorBrewer)
 library(alr3)
 library(stats)
-cor(df,method='pearson')
 
 set.seed(20022012)
-df_samp <- df[sample(1:length(df$MonthlyLoanPayment), 10000), ]
+df_samp <- df[sample(1:length(df$MonthlyLoanPayment), 500), ]
 names(df_samp)
-df_samp <- df_samp[,c(5,6,9,13,16,18,19,20,31,50,64,68)]
+df_samp <- df_samp[,c(5,6,9,13,16,31,50,64,68,84,85)]
+names(df_samp)
 
 #install.packages('GGally')
 library(GGally)
@@ -317,9 +317,129 @@ library(GGally)
 ggpairs(df_samp,
   lower = list(continuous = wrap("points", shape = I('.'))), 
   upper = list(combo = wrap("box", outlier.shape = I('.'))))
+
+summary(df$ratio_monthly_loan_payment)
 ```
 
+According to the matrix, BorrowerRate and Estimated return are positively correlated. And there is interesting thing going on with ProsperScore and BorrowerRate. There is strong positive correlation between LoanOriginalAmount and Monthly Loan Payment.
 
+```{r}
+ggplot(aes(x=BorrowerRate,y=EstimatedReturn),data=df) +
+  geom_point(size=2, alpha=0.5)
+
+ggplot(aes(x=BorrowerRate,y=EstimatedReturn),
+       data=subset(df,df$BorrowerRate<.4 & df$BorrowerRate>0)) +
+  geom_point(size=2, alpha=0.5)
+```
+
+Overal plot is showing positive correlation but the plot actually shows the multiple linear lines with the same slope.
+
+```{r}
+f <-lm(formula = EstimatedReturn ~ BorrowerRate, data = subset(df, BorrowerRate <= 
+  quantile(df$BorrowerRate, 0.999)))
+
+summary(f)
+
+cor.test(df$EstimatedReturn,df$BorrowerRate)
+```
+
+R^2 is 0.6686 and correlation is 0.8177. More analysis is required to explain the obvious linear patterns in a graph.
+
+```{r}
+ggplot(aes(x=ProsperScore,y=BorrowerRate), data=df) +
+  geom_boxplot()
+
+ggplot(aes(x=ProsperScore,y=BorrowerRate), data=subset(df,!is.na(ProsperScore))) +
+  geom_boxplot()
+
+```
+
+NA values in ProsperScore can be ignored. And a clear pattern can be observed in this box plot. As score gets higher, borrower rate gets lower.
+
+```{r}
+ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment), data=df) +
+  geom_point()
+```
+
+Clear linear pattern can be observed from the graph. Interesting thing is that 3 distinct linear lines can be seen.
+
+```{r}
+ff <- lm(MonthlyLoanPayment ~ LoanOriginalAmount, data=df)
+
+summary(ff)
+cor.test(df$MonthlyLoanPayment,df$LoanOriginalAmount)
+```
+
+As a result, these two variables have very high values of R^2 and correlation. This is reasonable because those with more loan amount have to pay more.
+
+### Ratio between monthly loan to payment
+
+Due to huge outlier in ratio monthly loan payment variable, the graphs in the matrix don't provide good information.
+
+```{r}
+ggplot(aes(x=ratio_monthly_loan_payment,y=BorrowerRate), data=df) +
+  geom_point()
+
+ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=subset(df,ratio_monthly_loan_payment<=.75)) +
+  geom_point()
+
+ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=subset(df,ratio_monthly_loan_payment<=.5 & BorrowerRate<.4)) +
+  geom_jitter(alpha=.1, size=2)
+```
+
+Alpha is set to 0.1 and the data is subsetted to get a better graph.
+
+```{r}
+ggplot(aes(y=ratio_monthly_loan_payment,x=EstimatedReturn), data=subset(df,ratio_monthly_loan_payment<=.2 & EstimatedReturn<0.2 & EstimatedReturn>0.0)) +
+  geom_jitter(alpha=.05, size=2)
+```
+
+The graph between ratio monthly loan payment and EstimatedReturn variables shows no obvious pattern. Ratio tends to be slightly higher at 0.10 EstimatedReturn but the trend is way too subtle.
+
+```{r}
+ggplot(aes(y=ratio_monthly_loan_payment,x=Term), data=subset(df,ratio_monthly_loan_payment<=1)) +
+  geom_jitter(alpha=.05, size=2) +
+  geom_boxplot()
+
+by(df$ratio_monthly_loan_payment,df$Term, summary)
+
+df[,c(5,85)] %>%
+  filter(ratio_monthly_loan_payment<=1) %>%
+  group_by(Term) %>%
+  dplyr::summarise(n=n())
+```
+
+Although median is the largest when the Term is 60, the mean is the largest when the Term is 36.
+
+```{r}
+ggplot(aes(y=ratio_monthly_loan_payment,x=LoanStatus), data=subset(df,ratio_monthly_loan_payment<=0.5)) +
+  geom_jitter(alpha=.05, size=2) +
+  geom_boxplot()
+
+by(df$ratio_monthly_loan_payment,df$LoanStatus, summary)
+```
+
+```{r}
+ggplot(aes(y=ratio_monthly_loan_payment,x=ProsperScore), data=subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(ProsperScore))) +
+  geom_jitter(alpha=.05, size=2) +
+  geom_boxplot()
+
+by(subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(ProsperScore))$ratio_monthly_loan_payment, subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(ProsperScore))$ProsperScore, summary)
+```
+
+ProsperScores of 5 and 6 tend to have a higher ratio and it gets lower as the score gets farther away from 5 and 6.
+
+```{r}
+ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid), 
+       data=subset(df,ratio_monthly_loan_payment<=0.5 &
+                     !is.na(CreditScoreRangeMid) &
+                     CreditScoreRangeMid > 300)) +
+  geom_jitter(alpha=.05, size=2)
+
+by(subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(CreditScoreRangeMid))$ratio_monthly_loan_payment, subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(CreditScoreRangeMid))$CreditScoreRangeMid, summary)
+```
+
+People with good credit score tend to have a higher ratio.
 
 # Bivariate Analysis
 
