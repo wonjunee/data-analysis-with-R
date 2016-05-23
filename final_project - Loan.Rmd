@@ -147,74 +147,131 @@ ggplot(aes(x=EmploymentStatusDuration), data=df) +
   scale_x_sqrt()
 ```
 
-Square root is applied. 
+Square root is applied to see a clear right skewed shape.
 
-### pH
+### CreditScoreRangeLower and CreditScoreRangeUpper
 ```{r}
-ggplot(aes(x=pH), data=df) +
-  geom_histogram()
+ggplot(aes(x=CreditScoreRangeLower), data=df) +
+  geom_histogram(bins=100)
+ggplot(aes(x=CreditScoreRangeUpper), data=df) +
+  geom_histogram(bins=100)
 ```
 
-### Sulphates
+These two histograms are very similar. Instead of using these 2 variables, I will create a new variable 'CreditScoreRangeMid' that is the average of these 2.
+
 ```{r}
-ggplot(aes(x=sulphates), data=df) +
-  geom_histogram()
+# Creating a new variable
+df$CreditScoreRangeMid <- (df$CreditScoreRangeLower + df$CreditScoreRangeUpper) /2
+
+ggplot(aes(x=df$CreditScoreRangeMid), data=df) +
+  geom_histogram(bins=100)
 ```
 
-### Alcohol
+### CurrentCreditLines, OpenCreditLines, TotalCreditLinespast7years
+
 ```{r}
-ggplot(aes(x=alcohol), data=df) +
-  geom_histogram(binwidth=.1) 
+ggplot(aes(x=CurrentCreditLines), data=df) +
+  geom_histogram(binwidth=1)
+
+ggplot(aes(x=OpenCreditLines), data=df) +
+  geom_histogram(binwidth=1)
+
+ggplot(aes(x=TotalCreditLinespast7years), data=df) +
+  geom_histogram(binwidth=1)
 ```
 
-### Quality
+These are nice looking right skewed histograms.
+
+### TotalTrades
 ```{r}
-ggplot(aes(x=quality), data=df) +
-  geom_histogram()
+summary(df$TotalTrades)
+ggplot(aes(x=TotalTrades), data=subset(df,!is.na(TotalTrades))) +
+  geom_histogram(bins=500)
 ```
 
-
-### More graphs with density and quality
-I got interested in the relationship between the density and the quality.
+### DebtToIncomeRatio
 ```{r}
-ggplot(aes(x=density),data=df) +
-  geom_histogram() +
-  facet_wrap(~quality)
+summary(df$DebtToIncomeRatio)
+ggplot(aes(x=DebtToIncomeRatio), data=subset(df,!is.na(DebtToIncomeRatio))) +
+  geom_histogram(bins=500)
 ```
 
+There is an outlier at 10.0.
+
 ```{r}
-table(df$quality)
+ggplot(aes(x=DebtToIncomeRatio), data=subset(df,!is.na(DebtToIncomeRatio) & DebtToIncomeRatio <= 1)) +
+  geom_histogram(bins=200)
 ```
 
-Facet wrap shows that most of wines have qualities of 5 and 6.
-The summary shows that there are not many quality of 3 and 8.
-However, regardless of the quality of the wine, the density is usually .996.
+The graph above shows the Debt to Income Ratio that are less than or equal to 1.
 
+### StatedMonthlyIncome
 ```{r}
+summary(df$StatedMonthlyIncome)
+
+ggplot(aes(x=StatedMonthlyIncome), data=subset(df,StatedMonthlyIncome<20000)) +
+  geom_histogram(bins = 200)
+
 df %>%
-  group_by(quality) %>%
-  summarise(mean=mean(density))
+  filter(StatedMonthlyIncome>quantile(df$StatedMonthlyIncome,0.99)) %>%
+  summarise(n=n())
 ```
 
-The means are very close to each other.
+There are 1140 people with monthly income greater than 20526.67. Most of the peole's income is around at 4667.
 
+### MonthlyLoanPayment
+```{r}
+summary(df$MonthlyLoanPayment)
+
+ggplot(aes(x=MonthlyLoanPayment), data=df) +
+  geom_histogram(bins=100)
+```
+
+
+### New Variable
+
+```{r}
+df$ratio_monthly_loan_payment <- df$MonthlyLoanPayment / df$StatedMonthlyIncome
+summary(df$ratio_monthly_loan_payment)
+
+df <- df %>% mutate(ratio_monthly_loan_payment = ifelse(StatedMonthlyIncome==0,0,MonthlyLoanPayment / StatedMonthlyIncome))
+
+ggplot(aes(x=ratio_monthly_loan_payment), data=df) +
+  geom_histogram(bins=100)
+```
+
+The new variable of the ratio of monthly loan payment to monthly income is created but the graph is not very good since there are many outliers.
+
+```{r}
+df$ratio_monthly_loan_payment.bucket <- cut(df$ratio_monthly_loan_payment, breaks=c(-0.01,.5,12571))
+
+summary(df$ratio_monthly_loan_payment.bucket)
+```
+
+There are only 582 number of observations that are larger than 0.5.
+
+```{r}
+ggplot(aes(x=ratio_monthly_loan_payment), data=subset(df,ratio_monthly_loan_payment<.5)) +
+  geom_histogram(bins=100)
+```
+
+The above histogram is plotted with subset of the data set where ratio_monthly_loan_payment is less than 0.5. The right skewed graph can be seen clearly.
 
 # Univariate Analysis
 
 ### What is the structure of your dataset?
-There are 1599 observations and 13 variables.
 ```{r}
 str(df)
 ```
-Quality is the only ordered factor variable with the following levels.
-```{r}
-table(df$quality)
-```
+
+There are 113937 observations and 86 variables.
+There are a lot of factor variables and below is a list of factor variables I will use for the further analysis.
+
+CreditGrade, Term, LoanStatus, ProsperScore, BorrowerState, Occupation, EmploymentStatus, IncomeRange
 
 ### What is/are the main feature(s) of interest in your dataset?
 
-I am interested in finding which variable affects the quality the most.
-Then I will find the value of each variable that defines the best quality of wines.
+I am interested in finding which variable affects the credit score. And I will find if there is any correlation between income related variables and Loan Status.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
