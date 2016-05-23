@@ -9,7 +9,7 @@ Final Project by Wonjun Lee
 # This prevents the code from displaying in the knitted HTML output.
 # You should set echo=FALSE for all code chunks in your file.
 
-library(ggplot2)
+suppressMessages(library(ggplot2))
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -301,18 +301,18 @@ After plotting many histograms from various variables, a consistent pattern can 
 #install.packages('RColorBrewer')
 #install.packages('alr3')
 #install.packages('stats')
-library(RColorBrewer)
+suppressMessages(library(RColorBrewer))
 library(alr3)
 library(stats)
 
 set.seed(20022012)
 df_samp <- df[sample(1:length(df$MonthlyLoanPayment), 500), ]
-names(df_samp)
+
 df_samp <- df_samp[,c(5,6,9,13,16,31,50,64,68,84,85)]
 names(df_samp)
 
 #install.packages('GGally')
-library(GGally)
+suppressMessages(library(GGally))
 
 ggpairs(df_samp,
   lower = list(continuous = wrap("points", shape = I('.'))), 
