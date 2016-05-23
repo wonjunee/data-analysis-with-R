@@ -167,8 +167,6 @@ However, regardless of the quality of the wine, the density is usually .996.
 df %>%
   group_by(quality) %>%
   summarise(mean=mean(density))
-
-str(df)
 ```
 
 The means are very close to each other.
@@ -223,7 +221,53 @@ In a histogram for citric acid, there are two abnormal peaks at near 0.00 and ne
 # Bivariate Plots Section
 ```{r echo=FALSE, Bivariate_Plots}
 cor(df[,c(2:12,14)],method='pearson')
+
+install.packages('GGally')
+library(GGally)
+df_sample <- df[,c(2:14)]
+
+ggpairs(df_sample,
+  lower = list(continuous = wrap("points", shape = I('.'))), 
+  upper = list(combo = wrap("box", outlier.shape = I('.'))))
+
+names(df)
 ```
+
+First of all of acidic variables (fixed.acidity and citric.acid) are negatively correlated to pH. This is very reasonable because low pH value means high acidic value. 
+
+```{r}
+df$quality <- factor(df$quality,labels=c(3,4,5,6,7,8))
+
+str(df)
+ggplot(aes(x=pH,y=fixed.acidity,color=quality), data=df_sample) +
+  geom_point(alpha = 0.5, size = 2, position = 'jitter') +
+  scale_fill_brewer(type = 'div')
+
+cor.test(df$pH, df$fixed.acidity)
+
+ggplot(aes(x=pH,y=citric.acid),data=df_sample) +
+  geom_point(alpha=.5)
+
+cor.test(df$pH, df$citric.acid)
+```
+
+Density is positively correlated to fixed.acidity and citric.acid and negatively correlated to alcohol. 
+
+```{r}
+ggplot(aes(x=density,y=fixed.acidity), data=df) +
+  geom_point(alpha=0.5, size=2, position='jitter')
+
+cor.test(df$density, df$fixed.acidity)
+
+ggplot(aes(x=density,y=citric.acid), data=df) +
+  geom_point(alpha=0.5, size=2, position='jitter')
+
+cor.test(df$density, df$citric.acid)
+
+```
+
+citric acid is not correlated to density as much as fixed acidity.
+
 
 # Bivariate Analysis
 
