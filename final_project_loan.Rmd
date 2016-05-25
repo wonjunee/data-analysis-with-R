@@ -495,14 +495,43 @@ summary(f)
 R^2 is very small so it is difficult to say there exists a linear relationship between this two variables, but generally people with good credit score have greater loan amounts.
 
 ```{r}
-ggplot(aes(x=StatedMonthlyIncome,y=LoanOriginalAmount), 
-       data=subset(df,StatedMonthlyIncome<=20000)) +
-  geom_point(alpha=.05, size=2)
+ggplot(aes(x=CreditScoreRangeMid,y=StatedMonthlyIncome), 
+       data=subset(df,
+                     CreditScoreRangeMid>300)) +
+  geom_jitter(alpha=.01,size=2) +
+  ggtitle("CreditScore vs. Monthly Income")
 
-f <- lm(LoanOriginalAmount ~ StatedMonthlyIncome,data=subset(df,CreditScoreRangeMid>350))
+ggplot(aes(x=CreditScoreRangeMid,y=StatedMonthlyIncome), 
+       data=subset(df,
+                     CreditScoreRangeMid>300 &
+                     StatedMonthlyIncome>10)) +
+  geom_jitter(alpha=.01,size=2) +
+  scale_y_log10() +
+  ggtitle("CreditScore vs. log(Monthly Income)")
+
+f <- lm(log(subset(df,StatedMonthlyIncome >10)$StatedMonthlyIncome) ~ subset(df,StatedMonthlyIncome > 10)$CreditScoreRangeMid)
+summary(f)
+
+cor.test(subset(df,StatedMonthlyIncome > 10)$StatedMonthlyIncome, subset(df,StatedMonthlyIncome > 10)$CreditScoreRangeMid)
+cor.test(log(subset(df,StatedMonthlyIncome > 10)$StatedMonthlyIncome), subset(df,StatedMonthlyIncome > 10)$CreditScoreRangeMid)
+```
+
+CreditScoreRangeMid vs. StatedMonthlyIncome was graphed without any modification. And then log of monthly income is graphed. The latter showed more linearlized graph and the correlation was higher.
+
+```{r}
+ggplot(aes(x=StatedMonthlyIncome,y=LoanOriginalAmount), 
+       data=subset(df,StatedMonthlyIncome>10)) +
+  scale_x_log10() +
+  geom_point(alpha=.01, size=2) +
+  ggtitle("Log of StatedMonthly Income vs. Loan Amount")
+
+f <- lm(subset(df,StatedMonthlyIncome>10)$LoanOriginalAmount ~ log(subset(df,StatedMonthlyIncome>10)$StatedMonthlyIncome))
+summary(f)
+cor.test(subset(df,StatedMonthlyIncome>10)$LoanOriginalAmount, log(subset(df,StatedMonthlyIncome>10)$StatedMonthlyIncome))
 summary(f)
 ```
 
+There is a linear relationship between the log of monthly income and loan amount.
 There are clear horizontal lines at multiple of 5000. I believe when the data is gathered the loan amounts are rounded.
 People whose monthly income is less than 8000 don't usually have laon amounts greater than 25,000.
 
@@ -730,8 +759,9 @@ From the graph, most of "Full-time" people have good prosper scores and low borr
 ```{r}
 ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=EmploymentStatus),
        data=subset(df,EmploymentStatus != "" & EmploymentStatus != "Employed" &
-                   StatedMonthlyIncome < 5000)) +
+                   StatedMonthlyIncome > 10)) +
          geom_jitter(alpha=1, size=2) +
+  scale_x_log10() +
         scale_color_brewer(type='qual')
 ```
 
@@ -780,12 +810,33 @@ ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=LoanStatus),
 
 It is  interesting to see that a lot of them actually completed their loan payment despite of their 0 income.
 
+
+Based on the observations so far, I can build a model using, OriginalLoanAmount, MonthlyLoanPayment, ProsperScore, Borrower Rate, EmploymentStatus and CreditScore.
+
+```{r}
+library(memisc)
+
+df_reduced <- subset(df,MonthlyLoanPayment>10)
+m1 <- lm(ProsperRating..numeric. ~ BorrowerRate, data = df)
+m2 <- update(m1, ~ . + LoanOriginalAmount)
+m3 <- update(m2, ~ . + log(MonthlyLoanPayment))
+m4 <- update(m3, ~ . + CreditScoreRangeMid)
+m4 <- update(m4, ~ . + EmploymentStatus)
+
+mtable(m1, m2, m3, m4, m5, sdigits=3)
+```
+
 # Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
+I found that those with good Prosper Scores tend to complete their payments better than those with bad Prosper Scores. So I decided to focus on finding which variables affect the prosper scores.
+I found that there monthly income, credit score, original loan amount, monthly loan payment are positively correlated to Prosper Score and Borrower Rate is negatively correlated to Prosper Score. In other words, the capability of completing the loan payments depend on these variables.
 
 ### Were there any interesting or surprising interactions between features?
+
+The most interesting thing I found was that that are many people who pay their loans with 0 income. And it was also interesting to find out that most of them actually completed their loan payments.
+Another interesting interaction was between the credit score and ratio between monthly loan payment to monthly income. People in mid range of credit scores have the highest ratio. People 
 
 ### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
 
