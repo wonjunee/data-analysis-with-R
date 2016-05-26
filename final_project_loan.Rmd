@@ -370,10 +370,12 @@ Outliers are removed. Correlation test shows a moderate value of negative correl
 
 ```{r}
 ggplot(aes(x=ProsperScore,y=BorrowerRate), data=df) +
-  geom_boxplot()
+  geom_boxplot() +
+  ggtitle("ProsperScore vs. BorrowerRate")
 
 ggplot(aes(x=ProsperScore,y=BorrowerRate), data=subset(df,!is.na(ProsperScore))) +
-  geom_boxplot()
+  geom_boxplot() +
+  ggtitle("ProsperScore vs. BorrowerRate without NA")
 
 ```
 
@@ -818,6 +820,7 @@ ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=EmploymentStatus),
 
 StatedMonthly vs. MonthlyLoanPayment is graphed again with EmploymentStatus coloring the points. I couldn't help but notice that there are some people who have 0 income and paying MonthlyLoanPayment. I will investigate these people more.
 
+
 ```{r}
 ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=EmploymentStatus),
        data=subset(df,EmploymentStatus != "" & EmploymentStatus != "Employed" &
@@ -915,19 +918,40 @@ This is a histogram of ProsperScore variable. It looks similar to the normal dis
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two}
+ggplot(aes(x=ProsperScore,y=BorrowerRate), data=subset(df,!is.na(ProsperScore))) +
+  geom_jitter(alpha=0.01,size=2) +
+  geom_boxplot() +
+  ggtitle("ProsperScore vs. BorrowerRate")
 
+ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), 
+       data=subset(df,CreditScoreRangeMid>300)) +
+  geom_point(alpha=0.01,size=2) +
+  ggtitle("CreditScoreRangeMid vs. BorrowerRate")
+
+ggplot(aes(x=ProsperScore,y=CreditScoreRangeMid), 
+       data=subset(df,CreditScoreRangeMid>300 &
+                     !is.na(ProsperScore))) +
+  geom_jitter(alpha=0.01,size=2) +
+  geom_boxplot() +
+  ggtitle("ProsperScore vs. CreditScoreRangeMid")
 ```
 
 ### Description Two
 
+These 3 graphs show that ProsperScore, BorrowerRate and CreditScore are somewhat correlated. There are negative correlations between ProsperScore and BorrowerRate and between CreditScore and BorrowerRate. And there is a positive correlation between CreditScore and ProsperScore.
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
-
+ggplot(aes(x=ProsperScore,y=BorrowerRate,color=StatedMonthlyIncome.bucket), 
+       data=df) +
+  geom_jitter(alpha=.5, size=2) +
+  ggtitle("ProsperScore vs. BorrowerRate colored by Monthly Income")
 ```
 
 ### Description Three
 
+Through this graph, the linear model can be constructed using ProsperScore, BorrowerRate and Monthly Income.
+This graph shows the that people with good ProsperScore and low BorrowerRate have large monthly income and people with bad ProsperScore and high BorrowerRate have low monthly income. 
 ------
 
 # Reflection
