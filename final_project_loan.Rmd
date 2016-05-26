@@ -1,4 +1,4 @@
-Final Project by Wonjun Lee
+Loan Data Exploration by Wonjun Lee
 ========================================================
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
@@ -126,8 +126,7 @@ The graph is drawn after Estimated Return is filtered (more than 0 and less than
 
 ### Prosper Score
 ```{r}
-ggplot(aes(x=ProsperScore
-), data=df) +
+ggplot(aes(x=ProsperScore), data=df) +
   geom_histogram(binwidth=.5) +
   ggtitle("ProsperScore Histogram")
 
@@ -137,6 +136,7 @@ table(df$ProsperScore)
 Prosper score is ranging from 1 to 11.
 
 ```{r}
+df$ProsperScore.numeric <- df$ProsperScore
 df$ProsperScore <- factor(df$ProsperScore)
 ```
 
@@ -904,11 +904,14 @@ R-squared was 0.909 at first. When more variables are added to the model, it get
 
 ### Plot One
 ```{r echo=FALSE, Plot_One}
-
+ggplot(aes(x=ProsperScore.numeric), data=df) +
+  geom_histogram(binwidth=.5) +
+  ggtitle("ProsperScore Histogram")
 ```
 
 ### Description One
 
+This is a histogram of ProsperScore variable. It looks similar to the normal distribution graph. Most of the people have ProsperScore between 4 and 8 and a small number of poeple are outside this range.
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two}
