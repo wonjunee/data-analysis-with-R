@@ -314,9 +314,9 @@ names(df_samp)
 #install.packages('GGally')
 suppressWarnings(library(GGally))
 
-ggpairs(df_samp,
-  lower = list(continuous = wrap("points", shape = I('.'))), 
-  upper = list(combo = wrap("box", outlier.shape = I('.'))))
+#ggpairs(df_samp,
+#  lower = list(continuous = wrap("points", shape = I('.'))), 
+#  upper = list(combo = wrap("box", outlier.shape = I('.'))))
 
 summary(df$ratio_monthly_loan_payment)
 ```
