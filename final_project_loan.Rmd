@@ -107,7 +107,7 @@ ggplot(aes(x=EstimatedReturn), data=df) +
 
 The graph with more bins shows clear outliers with negative values and more than 0.2.
 
-```{r echo=FALSE, Cutting_variable}
+```{r echo=FALSE, Investigating_Return}
 summary(df$EstimatedReturn)
 
 df$EstimatedReturn.bucket <- cut(df$EstimatedReturn, c(-0.1,0,0.2,0.3))
@@ -172,7 +172,7 @@ ggplot(aes(x=CreditScoreRangeUpper), data=df) +
 
 These two histograms are very similar. Instead of using these 2 variables, I will create a new variable 'CreditScoreRangeMid' that is the average of these 2.
 
-```{r echo=FALSE, Creating_new_variable}
+```{r echo=FALSE, Creating_new_variable_CreditScoreMid}
 # Creating a new variable
 df$CreditScoreRangeMid <- (df$CreditScoreRangeLower + df$CreditScoreRangeUpper) /2
 
@@ -265,7 +265,7 @@ ggplot(aes(x=ratio_monthly_loan_payment), data=df) +
 
 The new variable of the ratio of monthly loan payment to monthly income is created but the graph is not very good since there are many outliers.
 
-```{r echo=FALSE, Cutting_a_variable}
+```{r echo=FALSE, Cutting_a_variable_LoanPmt}
 df$ratio_monthly_loan_payment.bucket <- cut(df$ratio_monthly_loan_payment, breaks=c(-0.01,.5,12571))
 
 summary(df$ratio_monthly_loan_payment.bucket)
@@ -341,8 +341,7 @@ suppressWarnings(library(GGally))
 
 ggpairs(df_samp,
   lower = list(continuous = wrap("points", shape = I('.'))), 
-  upper = list(combo = wrap("box", outlier.shape = I('.')))) +
-  ggtitle("Bivarate Matrix")
+  upper = list(combo = wrap("box", outlier.shape = I('.'))))
 
 summary(df$ratio_monthly_loan_payment)
 ```
@@ -408,7 +407,7 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=df) +
 
 Due to huge outlier in ratio monthly loan payment variable, the graphs in the matrix don't provide good information.
 
-```{r echo=FALSE, Rate_vs_Ratio}
+```{r echo=FALSE, Rate_vs_Ratio_More}
 ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=subset(df,ratio_monthly_loan_payment<=.75)) +
   geom_point() +
   ggtitle("BorrowerRate vs. Ratio_monthly_loan_payment")
@@ -437,10 +436,10 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=Term), data=subset(df,ratio_monthly_lo
 
 by(df$ratio_monthly_loan_payment,df$Term, summary)
 
-df[,c(5,85)] %>%
+df %>%
   filter(ratio_monthly_loan_payment<=1) %>%
   group_by(Term) %>%
-  dplyr::summarise(n=n())
+  summarise(n=n())
 ```
 
 Although median is the largest when the Term is 60, the mean is the largest when the Term is 36.
@@ -648,7 +647,7 @@ ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
 
 The black colored dots are NA of ProsperScore. So I will get rid of them.
 
-```{r echo=FALSE, LoanAmt_LoanPmt_ProsperScore}
+```{r echo=FALSE, LoanAmt_LoanPmt_ProsperScore_FacetWrap}
 ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
        data=subset(df, ProsperScore %in% c('1','3','5','7','9','11'))) +
   geom_jitter(alpha=0.7, size=2) +
@@ -705,7 +704,7 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid,color=EmploymentSt
 
 Chargedoff, Complted and Defaulted are similar. Most of them are Full time. Interesting thing to note is that most of the people who is paying their loans are self-employed.
 
-```{r echo=FALSE, Cutting_a_variable}
+```{r echo=FALSE, Cutting_a_variable_Income}
 df$StatedMonthlyIncome.bucket <- cut(df$StatedMonthlyIncome,breaks=c(0,1000,2000,3000,4000,5000,6000,7000,8000,1.75e+06))
 table(df$StatedMonthlyIncome.bucket)
 ```
@@ -952,6 +951,26 @@ ggplot(aes(x=ProsperScore,y=BorrowerRate,color=StatedMonthlyIncome.bucket),
 
 Through this graph, the linear model can be constructed using ProsperScore, BorrowerRate and Monthly Income.
 This graph shows the that people with good ProsperScore and low BorrowerRate have large monthly income and people with bad ProsperScore and high BorrowerRate have low monthly income. 
+
 ------
 
 # Reflection
+
+There are total 113937 records with 81 variables in the data. I first filtered out the variables with too many NA values. Then, I analyzed each variable by creating a histogram and try to find variables that are important to this data set. There are some variables that got my attention: BorrowerRate, BorrowerAPR, CreditScore, ProsperScore, etc. I put the most emphasis on ProsperScore because according to the description of the data set, ProsperScore indicates the risk of repaying loans where 10 means the lowest risk and 0 means the highest risk. Since there are total 81 variables in the data set there are so many interesting variables I wanted to investigate further such as listing category that indicates the types of loan and BorrowerState that indicates the state of the address of the borrower. However, I decided to focus on finding the variables that affect the ProsperScore.
+
+During the investigation, I created 6 more variables to the data: BorrowerAPR.bucket, EstimatedReturn.bucket, ProsperScore.numeric, CreditScoreRangeMid, ratio monthly loan payment and ratio monthly loan payment.bucket. I used BorrowerAPR and BorrowerRate interchageably because they are almost the same.
+
+```{r echo=FALSE, BorrowerAPR_Rate, Warning=FALSE}
+ggplot(aes(x=BorrowerRate, y=BorrowerAPR), data=df) +
+  geom_point() + ggtitle("BorrowerRate vs. BorrowerAPR")
+
+cor.test(df$BorrowerRate,df$BorrowerAPR)
+```
+
+As the above plot and calculation indicate, the correlation is very close to 1. I used BorrowerAPR for bucket in order to use it in multivariate analysis.
+
+While the univariate analysis provides me which variables would be interesting to use, bivariate analysis provides the relationship between pairs of data variables I chose to use. One interesting I found during the analysis was that people who have good ProsperScore tends to have low BorrowerRate and high credit score. And people who pay their loans using higher ratio to their monthly income usually have middle range of credit scores and prosper scores. Those with high credit scores and prosper scores don't use high ratio. Later investigation showed that although people with high ratio and with low ratio pay similar amounts of loan payments those with high prosper score usually have higher monthly income. So, people with high income and high prosper score not neccessarily pay more loans.
+
+There are few problems I confronted during the analysis. When using MonthlyIncome variable, there a lot of outliers that are way beyond the average and median of the data. At first I filtered those outliers and I realized that I have to get rid of too many of the data. So I used log10 and it provided the better histogram and plot of the data.
+
+As I mentioned there are still a lot of interesting variables that can provide interesting results from further analysis. I would be interesting to find which state has the greatest loan amount borrowed and highest percentage of completing their loans. And I would like to find which type of loan has the highest percentage of completion and highest average mean and median of prosper score and Credit score.
