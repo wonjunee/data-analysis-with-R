@@ -867,14 +867,15 @@ It is  interesting to see that a lot of them actually completed their loan payme
 Based on the observations so far, I can build a model using, OriginalLoanAmount, MonthlyLoanPayment, ProsperScore, Borrower Rate, EmploymentStatus and CreditScore.
 
 ```{r}
+
 library(memisc)
 
 df_reduced <- subset(df,MonthlyLoanPayment>10)
-m1 <- lm(ProsperRating..numeric. ~ BorrowerRate, data = df)
+m1 <- lm(ProsperRating..numeric. ~ BorrowerRate, data = df_reduced)
 m2 <- update(m1, ~ . + LoanOriginalAmount)
 m3 <- update(m2, ~ . + log(MonthlyLoanPayment))
 m4 <- update(m3, ~ . + CreditScoreRangeMid)
-m4 <- update(m4, ~ . + EmploymentStatus)
+m5 <- update(m4, ~ . + EmploymentStatus)
 
 mtable(m1, m2, m3, m4, m5, sdigits=3)
 ```
@@ -893,6 +894,9 @@ Another interesting interaction was between the credit score and ratio between m
 
 ### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
 
+I created a model starting from ProsperRating..numeric. and BorrowerRate. ProsperRating..numeric. is used instaed of ProsperScore because it is a numeric variable while ProsperScore is a factor variable.
+Then I added 4 more variables: LoanOriginalAmount, log(monthlyLoanPayment), CreditScoreRangeMid and EmploymentStatus.
+R-squared was 0.909 at first. When more variables are added to the model, it gets increased until 0.917.
 
 ------
 
