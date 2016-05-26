@@ -29,7 +29,7 @@ There are 81 variables with 113937 observations.
 Plotting a histogram for each variable will be helpful in understanding the data set. I will only use variables that are not factors.
 
 ### Finding good variables
-```{r}
+```{r echo=FALSE, FINDING_VARIABLES}
 library(dplyr)
 
 colSums(is.na(df))
@@ -38,7 +38,7 @@ colSums(is.na(df))
 This will help me filter out variables with too many NA's.
 
 ### Term
-```{r}
+```{r echo=FALSE, TERM_HISTOGRAM}
 ggplot(aes(x=Term), data=df) +
   geom_histogram(bins=30) +
   ggtitle("Term Histogram")
@@ -46,7 +46,7 @@ ggplot(aes(x=Term), data=df) +
 
 There are only 3 terms people use. More specifically,
 
-```{r}
+```{r echo=FALSE, FACTORING_TERM}
 table(df$Term)
 df$Term <- factor(df$Term)
 ```
@@ -54,7 +54,7 @@ df$Term <- factor(df$Term)
 12, 36 and 60. Term will be used as a factored variable.
 
 ### Borrower Rate, Borrower APR, Lender Yield, EstimatedEffectiveYield
-```{r}
+```{r echo=FALSE, INTEREST_RATES}
 ggplot(aes(x=BorrowerAPR), data=df) +
   geom_histogram(bins=100) +
   ggtitle("BorrowerAPR Histogram")
@@ -75,7 +75,7 @@ The graphs are similar to each other. Right skewed graph with an abnormal peak a
 
 Without the high peak around at .36 the histogram is almost a right skewed graph. According to the graph, there is a very popular APR near at .36. Let's find the exact value of it.
 
-```{r}
+```{r echo=FALSE, Find_the_most_popular_interest_rates}
 df %>%
   group_by(BorrowerRate) %>%
   summarise(Count=n()) %>%
@@ -85,13 +85,13 @@ df %>%
 .3177 is the most popular APR being applied.
 Cutting the variable and using it as a factored variable might be more useful.
 
-```{r}
+```{r echo=FALSE, Cutting_APR}
 df$BorrowerAPR.bucket <- cut(df$BorrowerAPR,breaks=10)
 table(df$BorrowerAPR.bucket)
 ```
 
 ### Estimated Return
-```{r}
+```{r echo=FALSE, EstimatedReturnHistogram}
 ggplot(aes(x=EstimatedReturn), data=df) +
   geom_histogram(bins=30) +
   ggtitle("EstimatedReturn Histogram")
@@ -99,7 +99,7 @@ ggplot(aes(x=EstimatedReturn), data=df) +
 
 This looks a right skewed graph with outliers less than 0.0.
 
-```{r}
+```{r echo=FALSE, With_more_bins}
 ggplot(aes(x=EstimatedReturn), data=df) +
   geom_histogram(bins=100) +
   ggtitle("EstimatedReturn Histogram with More bins")
@@ -107,7 +107,7 @@ ggplot(aes(x=EstimatedReturn), data=df) +
 
 The graph with more bins shows clear outliers with negative values and more than 0.2.
 
-```{r}
+```{r echo=FALSE, Cutting_variable}
 summary(df$EstimatedReturn)
 
 df$EstimatedReturn.bucket <- cut(df$EstimatedReturn, c(-0.1,0,0.2,0.3))
@@ -115,7 +115,7 @@ table(df$EstimatedReturn.bucket)
 ```
 
 There are 176 observations less than 0.0 and 80 observations more than 0.2.
-```{r}
+```{r echo=FALSE, Filtered_histogram}
 ggplot(aes(x=EstimatedReturn), data=subset(df,df$EstimatedReturn>0 & df$EstimatedReturn<0.2)) +
   geom_histogram(bins=50) +
   ggtitle("EstimatedReturn Histogram (Filtered)")
@@ -125,7 +125,7 @@ ggplot(aes(x=EstimatedReturn), data=subset(df,df$EstimatedReturn>0 & df$Estimate
 The graph is drawn after Estimated Return is filtered (more than 0 and less than 0.2). Similar to the previous variables, there is a peak at the right.
 
 ### Prosper Score
-```{r}
+```{r echo=FALSE, ProsperScoreHistogram}
 ggplot(aes(x=ProsperScore), data=df) +
   geom_histogram(binwidth=.5) +
   ggtitle("ProsperScore Histogram")
@@ -135,7 +135,7 @@ table(df$ProsperScore)
 
 Prosper score is ranging from 1 to 11.
 
-```{r}
+```{r echo=FALSE, Factoring_variable}
 df$ProsperScore.numeric <- df$ProsperScore
 df$ProsperScore <- factor(df$ProsperScore)
 ```
@@ -143,7 +143,7 @@ df$ProsperScore <- factor(df$ProsperScore)
 Prosper score is factored.
 
 ### Employment Status Duration
-```{r}
+```{r echo=FALSE, EmploymentStatusDurationHistogram}
 ggplot(aes(x=EmploymentStatusDuration), data=df) +
   geom_histogram(bins=100) +
   ggtitle("EmploymentStatusDuration Histogram")
@@ -151,7 +151,7 @@ ggplot(aes(x=EmploymentStatusDuration), data=df) +
 
 This is very nice looking right skewed graph without a peak at the right.
 
-```{r}
+```{r echo=FALSE, Square_rooted}
 ggplot(aes(x=EmploymentStatusDuration), data=df) +
   geom_histogram(bins=100) +
   scale_x_sqrt() +
@@ -161,7 +161,7 @@ ggplot(aes(x=EmploymentStatusDuration), data=df) +
 Square root is applied to see a clear right skewed shape.
 
 ### CreditScoreRangeLower and CreditScoreRangeUpper
-```{r}
+```{r echo=FALSE, CreditScores}
 ggplot(aes(x=CreditScoreRangeLower), data=df) +
   geom_histogram(bins=100) +
   ggtitle("CreditScoreRangeLower Histogram")
@@ -172,7 +172,7 @@ ggplot(aes(x=CreditScoreRangeUpper), data=df) +
 
 These two histograms are very similar. Instead of using these 2 variables, I will create a new variable 'CreditScoreRangeMid' that is the average of these 2.
 
-```{r}
+```{r echo=FALSE, Creating_new_variable}
 # Creating a new variable
 df$CreditScoreRangeMid <- (df$CreditScoreRangeLower + df$CreditScoreRangeUpper) /2
 
@@ -183,7 +183,7 @@ ggplot(aes(x=df$CreditScoreRangeMid), data=df) +
 
 ### CurrentCreditLines, OpenCreditLines, TotalCreditLinespast7years
 
-```{r}
+```{r echo=FALSE, CreditLines}
 ggplot(aes(x=CurrentCreditLines), data=df) +
   geom_histogram(binwidth=1) +
   ggtitle("CurrentCreditLines Histogram")
@@ -200,7 +200,7 @@ ggplot(aes(x=TotalCreditLinespast7years), data=df) +
 These are nice looking right skewed histograms.
 
 ### TotalTrades
-```{r}
+```{r echo=FALSE, TotalTrades}
 summary(df$TotalTrades)
 ggplot(aes(x=TotalTrades), data=subset(df,!is.na(TotalTrades))) +
   geom_histogram(bins=500) +
@@ -208,7 +208,7 @@ ggplot(aes(x=TotalTrades), data=subset(df,!is.na(TotalTrades))) +
 ```
 
 ### DebtToIncomeRatio
-```{r}
+```{r echo=FALSE, DebtToIncomeRatio}
 summary(df$DebtToIncomeRatio)
 ggplot(aes(x=DebtToIncomeRatio), data=subset(df,!is.na(DebtToIncomeRatio))) +
   geom_histogram(bins=500) +
@@ -217,7 +217,7 @@ ggplot(aes(x=DebtToIncomeRatio), data=subset(df,!is.na(DebtToIncomeRatio))) +
 
 There is an outlier at 10.0.
 
-```{r}
+```{r echo=FALSE, Taking_out_outliers}
 ggplot(aes(x=DebtToIncomeRatio), data=subset(df,!is.na(DebtToIncomeRatio) & DebtToIncomeRatio <= 1)) +
   geom_histogram(bins=200) +
   ggtitle("DebtToIncomeRatio Histogram")
@@ -226,7 +226,7 @@ ggplot(aes(x=DebtToIncomeRatio), data=subset(df,!is.na(DebtToIncomeRatio) & Debt
 The graph above shows the Debt to Income Ratio that are less than or equal to 1.
 
 ### StatedMonthlyIncome
-```{r}
+```{r echo=FALSE, MonthlyIncome}
 summary(df$StatedMonthlyIncome)
 
 ggplot(aes(x=StatedMonthlyIncome), data=subset(df,StatedMonthlyIncome<20000)) +
@@ -241,7 +241,7 @@ df %>%
 There are 1140 people with monthly income greater than 20526.67. Most of the peole's income is around at 4667.
 
 ### MonthlyLoanPayment
-```{r}
+```{r echo=FALSE, MonthlyLoanPayment}
 summary(df$MonthlyLoanPayment)
 
 ggplot(aes(x=MonthlyLoanPayment), data=df) +
@@ -252,7 +252,7 @@ ggplot(aes(x=MonthlyLoanPayment), data=df) +
 
 ### New Variable
 
-```{r}
+```{r echo=FALSE, Creating_new_variable}
 df$ratio_monthly_loan_payment <- df$MonthlyLoanPayment / df$StatedMonthlyIncome
 summary(df$ratio_monthly_loan_payment)
 
@@ -265,7 +265,7 @@ ggplot(aes(x=ratio_monthly_loan_payment), data=df) +
 
 The new variable of the ratio of monthly loan payment to monthly income is created but the graph is not very good since there are many outliers.
 
-```{r}
+```{r echo=FALSE, Cutting_a_variable}
 df$ratio_monthly_loan_payment.bucket <- cut(df$ratio_monthly_loan_payment, breaks=c(-0.01,.5,12571))
 
 summary(df$ratio_monthly_loan_payment.bucket)
@@ -283,7 +283,7 @@ The above histogram is plotted with subset of the data set where ratio_monthly_l
 
 
 ### Original Loan Amount
-```{r}
+```{r echo=FALSE, OriginalLoanAmt}
 ggplot(aes(x=LoanOriginalAmount), data=df) +
   geom_histogram(bins=10) +
   ggtitle("LoanOriginalAmount Histogram")
@@ -293,7 +293,7 @@ ggplot(aes(x=LoanOriginalAmount), data=df) +
 # Univariate Analysis
 
 ### What is the structure of your dataset?
-```{r}
+```{r echo=FALSE, StructureOfData}
 str(df)
 ```
 
@@ -339,17 +339,17 @@ names(df_samp)
 #install.packages('GGally')
 suppressWarnings(library(GGally))
 
-#ggpairs(df_samp,
-#  lower = list(continuous = wrap("points", shape = I('.'))), 
-#  upper = list(combo = wrap("box", outlier.shape = I('.')))) +
-#  ggtitle("Bivarate Matrix")
+ggpairs(df_samp,
+  lower = list(continuous = wrap("points", shape = I('.'))), 
+  upper = list(combo = wrap("box", outlier.shape = I('.')))) +
+  ggtitle("Bivarate Matrix")
 
 summary(df$ratio_monthly_loan_payment)
 ```
 
 According to the matrix, BorrowerRate and Estimated return are positively correlated. And there is interesting thing going on with ProsperScore and BorrowerRate. There is strong positive correlation between LoanOriginalAmount and Monthly Loan Payment.
 
-```{r}
+```{r echo=FALSE, Score_vs_Rate}
 ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), data=df) +
   geom_point(alpha=0.01,size=2) +
   ggtitle("CreditsScoreRangeMid vs. BorrowerRate")
@@ -357,7 +357,7 @@ ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), data=df) +
 
 As expected, Credit Score and BorrowerRate are negatively correlated.
 
-```{r}
+```{r echo=FALSE, Rate_vs_Score_CorTest}
 ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), 
        data=subset(df,CreditScoreRangeMid>300)) +
   geom_point(alpha=0.01,size=2) +
@@ -368,7 +368,7 @@ cor.test(subset(df,CreditScoreRangeMid>400)$BorrowerRate,subset(df,CreditScoreRa
 
 Outliers are removed. Correlation test shows a moderate value of negative correlation.
 
-```{r}
+```{r echo=FALSE, Score_vs_Rate_Filtered}
 ggplot(aes(x=ProsperScore,y=BorrowerRate), data=df) +
   geom_boxplot() +
   ggtitle("ProsperScore vs. BorrowerRate")
@@ -381,7 +381,7 @@ ggplot(aes(x=ProsperScore,y=BorrowerRate), data=subset(df,!is.na(ProsperScore)))
 
 NA values in ProsperScore can be ignored. And a clear pattern can be observed in this box plot. As score gets higher, borrower rate gets lower.
 
-```{r}
+```{r echo=FALSE, LoanAmt_vs_Pmt}
 ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment), data=df) +
   geom_point() +
   ggtitle("LoanOriginalAmount vs. MonthlyLoanPayment")
@@ -389,7 +389,7 @@ ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment), data=df) +
 
 Clear linear pattern can be observed from the graph. Interesting thing is that 3 distinct linear lines can be seen.
 
-```{r}
+```{r echo=FALSE, CorTest}
 ff <- lm(MonthlyLoanPayment ~ LoanOriginalAmount, data=df)
 
 summary(ff)
@@ -400,7 +400,7 @@ As a result, these two variables have very high values of R^2 and correlation. T
 
 ### Ratio between monthly loan to payment
 
-```{r}
+```{r echo=FALSE, Rate_vs_Ratio}
 ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=df) +
   geom_point() +
   ggtitle("BorrowerRate vs. ratio_monthly_loan_payment")
@@ -408,10 +408,10 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=df) +
 
 Due to huge outlier in ratio monthly loan payment variable, the graphs in the matrix don't provide good information.
 
-```{r}
+```{r echo=FALSE, Rate_vs_Ratio}
 ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=subset(df,ratio_monthly_loan_payment<=.75)) +
   geom_point() +
-  ggtitle("BorrowerRate vs. BorrowerRate")
+  ggtitle("BorrowerRate vs. Ratio_monthly_loan_payment")
 
 ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=subset(df,ratio_monthly_loan_payment<=.5 & BorrowerRate<.4)) +
   geom_jitter(alpha=.1, size=2) +
@@ -420,7 +420,7 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=subset(df,ratio_mo
 
 Outliers are removed and alpha is set to 0.1 and the data is subsetted to get a better graph.
 
-```{r}
+```{r echo=FALSE, Return_vs_Ratio}
 ggplot(aes(y=ratio_monthly_loan_payment,x=EstimatedReturn), data=subset(df,ratio_monthly_loan_payment<=.2 & EstimatedReturn<0.2 & EstimatedReturn>0.0)) +
   geom_jitter(alpha=.05, size=2) +
   ggtitle("EstimatedReturn vs. ratio_monthly_loan_payment")
@@ -429,7 +429,7 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=EstimatedReturn), data=subset(df,ratio
 
 The graph between ratio monthly loan payment and EstimatedReturn variables shows no obvious pattern. Ratio tends to be slightly higher at 0.10 EstimatedReturn but the trend is way too subtle.
 
-```{r}
+```{r echo=FALSE, Term_vs_Ratio}
 ggplot(aes(y=ratio_monthly_loan_payment,x=Term), data=subset(df,ratio_monthly_loan_payment<=1)) +
   geom_jitter(alpha=.05, size=2) +
   geom_boxplot() +
@@ -445,7 +445,7 @@ df[,c(5,85)] %>%
 
 Although median is the largest when the Term is 60, the mean is the largest when the Term is 36.
 
-```{r}
+```{r echo=FALSE, LoanStatus_vs_Ratio}
 ggplot(aes(y=ratio_monthly_loan_payment,x=LoanStatus), data=subset(df,ratio_monthly_loan_payment<=0.5)) +
   geom_jitter(alpha=.05, size=2) +
   geom_boxplot() +
@@ -454,7 +454,7 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=LoanStatus), data=subset(df,ratio_mont
 by(df$ratio_monthly_loan_payment,df$LoanStatus, summary)
 ```
 
-```{r}
+```{r echo=FALSE, Status_vs_Income}
 ggplot(aes(y=StatedMonthlyIncome,x=LoanStatus), 
        data=df) +
   geom_jitter(alpha=.05, size=2) +
@@ -472,7 +472,7 @@ by(df$StatedMonthlyIncome, df$LoanStatus, summary)
 
 Completed people have greater incomes than Defaulted people.
 
-```{r}
+```{r echo=FALSE, Status_vs_Rate}
 ggplot(aes(y=BorrowerRate,x=LoanStatus), 
        data=df) +
   geom_jitter(alpha=.05, size=2) +
@@ -484,7 +484,7 @@ by(df$BorrowerRate, df$LoanStatus, summary)
 
 People with less borrower rates complete their loan payments better than those with higher rates.
 
-```{r}
+```{r echo=FALSE, Score_vs_Ratio}
 ggplot(aes(y=ratio_monthly_loan_payment,x=ProsperScore), data=subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(ProsperScore))) +
   geom_jitter(alpha=.05, size=2) +
   geom_boxplot() +
@@ -495,7 +495,7 @@ by(subset(df,ratio_monthly_loan_payment<=0.5 & !is.na(ProsperScore))$ratio_month
 
 ProsperScores of 5 and 6 tend to have a higher ratio and it gets lower as the score gets farther away from 5 and 6.
 
-```{r}
+```{r echo=FALSE, Score_vs_Ratio_Filtered}
 ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid), 
        data=subset(df,ratio_monthly_loan_payment<=0.5 &
                      !is.na(CreditScoreRangeMid) &
@@ -506,7 +506,7 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid),
 
 People with 700 credit score tend to have the highest ratio.
 
-```{r}
+```{r echo=FALSE, Prosper_vs_credit}
 table(df$CreditScoreRangeUpper)
 ggplot(aes(x=ProsperScore,y=CreditScoreRangeMid), 
        data=subset(df,!is.na(CreditScoreRangeMid) &
@@ -519,7 +519,7 @@ ggplot(aes(x=ProsperScore,y=CreditScoreRangeMid),
 
 Interesting thing here is that the credit score is increasing until the prosper score 10 and it decreases when the prosper score is 11. People with really nice credit scores have a prosper score of 10.
 
-```{r}
+```{r echo=FALSE, Occupation_vs_LoanAmt}
 ggplot(aes(x=Occupation,y=LoanOriginalAmount), 
        data=df) +
   geom_jitter(alpha=.05, size=2) +
@@ -528,7 +528,7 @@ ggplot(aes(x=Occupation,y=LoanOriginalAmount),
 
 This is a graph of Occupation and Loan amount. Since there are too many occupations and these occupations have to be grouped so that more clear pattern can be observed. But I decided not to use Occupation this time.
 
-```{r}
+```{r echo=FALSE, Score_vs_LoanAmt_CorTest}
 ggplot(aes(x=CreditScoreRangeMid,y=LoanOriginalAmount), 
        data=subset(df,CreditScoreRangeMid>350)) +
   geom_jitter(alpha=.05, size=2) +
@@ -540,7 +540,7 @@ summary(f)
 
 R^2 is very small so it is difficult to say there exists a linear relationship between this two variables, but generally people with good credit score have greater loan amounts.
 
-```{r}
+```{r echo=FALSE, Score_vs_Income}
 ggplot(aes(x=CreditScoreRangeMid,y=StatedMonthlyIncome), 
        data=subset(df,
                      CreditScoreRangeMid>300)) +
@@ -564,7 +564,7 @@ cor.test(log(subset(df,StatedMonthlyIncome > 10)$StatedMonthlyIncome), subset(df
 
 CreditScoreRangeMid vs. StatedMonthlyIncome was graphed without any modification. And then log of monthly income is graphed. The latter showed more linearlized graph and the correlation was higher.
 
-```{r}
+```{r echo=FALSE, Income_vs_Amt}
 ggplot(aes(x=StatedMonthlyIncome,y=LoanOriginalAmount), 
        data=subset(df,StatedMonthlyIncome>10)) +
   scale_x_log10() +
@@ -629,7 +629,7 @@ ggplot(aes(x=CreditScoreRangeMid,y=ratio_monthly_loan_payment,color=ProsperScore
 
 I plotted ratio monthly loan payment of credit score for each BorrowerAPR. Good prosper scores can be found in the range of 0.0571 to 0.108 of a borrower rate. And they also have a good credit scores. As the borrower rate increases, the prosper score and credit score decrease.
 
-```{r}
+```{r echo=FALSE, Loan_Pmt_ProsperScore}
 ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
        data=df) +
   geom_jitter(alpha=0.5, size=2) +
@@ -638,7 +638,7 @@ ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
 
 Note that those with ProsperScore of 11 usually are on the lines that have slope of 1/30 or 1/50.
 
-```{r}
+```{r echo=FALSE, LoanAmt_LoanPmt_ProsperScore}
 ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
        data=df) +
   geom_jitter(alpha=0.5, size=2) +
@@ -648,7 +648,7 @@ ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
 
 The black colored dots are NA of ProsperScore. So I will get rid of them.
 
-```{r}
+```{r echo=FALSE, LoanAmt_LoanPmt_ProsperScore}
 ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
        data=subset(df, ProsperScore %in% c('1','3','5','7','9','11'))) +
   geom_jitter(alpha=0.7, size=2) +
@@ -666,7 +666,7 @@ ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
 
 Look at Completed and Defaulted. Most of the people with ProsperScore of 11 are in completed status.
 
-```{r}
+```{r echo=FALSE, LoanAmt_LoanPmt_ProsperScore_APR}
 ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
        data=subset(df,!is.na(ProsperScore))) +
   geom_jitter(alpha=0.5, size=2) +
@@ -676,7 +676,7 @@ ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore),
 
 The graph is now faceted by BorrowerAPR. More obvious pattern can be observed. People with good ProsperScore are in the ranges of the low rates and those with bad score are in the ranges of the high rates. As the Borrower APR gets larger, the score gets lower. 
 
-```{r}
+```{r echo=FALSE, Ratio_LoanPmt_CreditScore}
 ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid,color=ProsperScore), 
        data=subset(df,ratio_monthly_loan_payment<=0.5 &
                      !is.na(CreditScoreRangeMid) &
@@ -689,7 +689,7 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid,color=ProsperScore
 
 From the previous plot, the positive correlation between CreditScore and ProsperScore is already observed. What's interesting to note in this graph is that those with good prosperScore don't usually pay more than 20% of their income for their loan payments.
 
-```{r}
+```{r echo=FALSE, CreditScore_Ratio_EmpStatus}
 ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid,color=EmploymentStatus), 
        data=subset(df,ratio_monthly_loan_payment<=0.5 &
                      !is.na(CreditScoreRangeMid) &
@@ -705,14 +705,14 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=CreditScoreRangeMid,color=EmploymentSt
 
 Chargedoff, Complted and Defaulted are similar. Most of them are Full time. Interesting thing to note is that most of the people who is paying their loans are self-employed.
 
-```{r}
+```{r echo=FALSE, Cutting_a_variable}
 df$StatedMonthlyIncome.bucket <- cut(df$StatedMonthlyIncome,breaks=c(0,1000,2000,3000,4000,5000,6000,7000,8000,1.75e+06))
 table(df$StatedMonthlyIncome.bucket)
 ```
 
 The StatedMonthlyIncome is cutted into 9 intervals.
 
-```{r}
+```{r echo=FALSE, ProsperScore_Rate_Income}
 ggplot(aes(x=ProsperScore,y=BorrowerRate,color=StatedMonthlyIncome.bucket), 
        data=df) +
   geom_jitter(alpha=.5, size=2) +
@@ -721,7 +721,7 @@ ggplot(aes(x=ProsperScore,y=BorrowerRate,color=StatedMonthlyIncome.bucket),
 
 This graph also shows that people with high income levels have high Prosper Score and low Borrower Rate.
 
-```{r}
+```{r echo=FALSE, Investigating_Occupation}
 
 df %>%
   group_by(Occupation) %>%
@@ -739,7 +739,7 @@ df %>%
 There are 68 different occupations in the data set.
 According to the table above the counts for some occupations are less than 1000. I will filter out such people whose count is less than 1000.
 
-```{r}
+```{r echo=FALSE, Further_investigation}
 df %>%
   group_by(Occupation) %>%
   summarise(count=n(), 
@@ -769,7 +769,7 @@ Occupation_lists <- c("Attorney",
 
 Top 5 and bottom 5 are chosen for the further analysis.
 
-```{r}
+```{r echo=FALSE, ProsperScore_Ratio_Occupation}
 ggplot(aes(y=BorrowerRate, x=ProsperScore, color=Occupation),
        data=subset(df,
                    Occupation %in% Occupation_lists &
@@ -780,13 +780,13 @@ ggplot(aes(y=BorrowerRate, x=ProsperScore, color=Occupation),
 
 ProsperScore vs. BorrowerRate is plotted with color of Occupations. Unfortunately, too many ProsperScores are NA so this plot cannot be used for the analysis.
 
-```{r}
+```{r echo=FALSE, Table}
 table(df$EmploymentStatus)
 ```
 
 There are 9 different types of employment status including NA.
 
-```{r}
+```{r echo=FALSE, ProsperScore_Rate_Status}
 ggplot(aes(y=BorrowerRate, x=ProsperScore, color=EmploymentStatus),
        data=subset(df,EmploymentStatus != "" & !is.na(ProsperScore))) +
          geom_jitter(alpha=1, size=2) +
@@ -797,7 +797,7 @@ ggplot(aes(y=BorrowerRate, x=ProsperScore, color=EmploymentStatus),
 full-time people are at the right bottom corner and Self-employed people are at the left hand side.
 
 
-```{r}
+```{r echo=FALSE, ProsperScore_Rate_Status_FacetWrap}
 ggplot(aes(y=BorrowerRate, x=ProsperScore),
        data=subset(df,EmploymentStatus != "" & !is.na(ProsperScore))) +
          geom_jitter(alpha=.05, size=2) +
@@ -808,7 +808,7 @@ ggplot(aes(y=BorrowerRate, x=ProsperScore),
 From now on I will ignore "Employed" status because it is actually including everything except "Retired" status.
 From the graph, most of "Full-time" people have good prosper scores and low borrower rate and most of "self-employed" and "Not employed" people have bad prosper scores and high borrower rates. It is interesting to see that "retired" and "Part-time" tend to have good prosper scores and low borrower rates.
 
-```{r}
+```{r echo=FALSE, Income_LoanPmt_Status}
 ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=EmploymentStatus),
        data=subset(df,EmploymentStatus != "" & EmploymentStatus != "Employed" &
                    StatedMonthlyIncome > 10)) +
@@ -821,7 +821,7 @@ ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=EmploymentStatus),
 StatedMonthly vs. MonthlyLoanPayment is graphed again with EmploymentStatus coloring the points. I couldn't help but notice that there are some people who have 0 income and paying MonthlyLoanPayment. I will investigate these people more.
 
 
-```{r}
+```{r echo=FALSE, Income_LoanPmt_Status_zeroIncome}
 ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=EmploymentStatus),
        data=subset(df,EmploymentStatus != "" & EmploymentStatus != "Employed" &
                    StatedMonthlyIncome == 0)) +
@@ -833,7 +833,7 @@ ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=EmploymentStatus),
 This is jitter plot where StatedMonthlyIncome is 0.
 
 
-```{r}
+```{r echo=FALSE, Income_LoanPmt_Status_FacetWrap}
 ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=ProsperScore),
        data=subset(df,EmploymentStatus != "" & EmploymentStatus != "Employed" &
                    StatedMonthlyIncome == 0)) +
@@ -844,7 +844,7 @@ ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=ProsperScore),
 
 Most of the people don't specify their prosper score so I will focus on "Not employed" because they have the greatest number of data that are not NA.
 
-```{r}
+```{r echo=FALSE, Income_LoanPmt_ProsperScore}
 ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome),
        data=subset(df,EmploymentStatus != "" & EmploymentStatus == "Not employed" &
                    StatedMonthlyIncome == 0)) +
@@ -855,7 +855,7 @@ ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome),
 
 These are the "Not employed" people with 0 StatedMonthlyIncome. As expected their scores are low.
 
-```{r}
+```{r echo=FALSE, Income_LoanPmt_LoanStatus_FacetWrap}
 ggplot(aes(y=MonthlyLoanPayment, x=StatedMonthlyIncome, color=LoanStatus),
        data=subset(df,EmploymentStatus != "" & EmploymentStatus == "Not employed" &
                    StatedMonthlyIncome == 0)) +
@@ -869,7 +869,7 @@ It is  interesting to see that a lot of them actually completed their loan payme
 
 Based on the observations so far, I can build a model using, OriginalLoanAmount, MonthlyLoanPayment, ProsperScore, Borrower Rate, EmploymentStatus and CreditScore.
 
-```{r}
+```{r echo=FALSE, Constructing_Linear_Model}
 
 library(memisc)
 
