@@ -340,9 +340,9 @@ library(alr3)
 library(stats)
 
 set.seed(20022012)
-df_samp <- df[sample(1:length(df$MonthlyLoanPayment), 500), ]
+df_samp <- df[sample(1:length(df$MonthlyLoanPayment), 10), ]
 
-df_samp <- df_samp[,c(5,6,9,13,16,31,50,64,68,84,85)]
+df_samp <- df_samp[,c(6,9,13,16,50,64,68,85)]
 names(df_samp)
 
 #install.packages('GGally')
@@ -350,7 +350,11 @@ suppressWarnings(library(GGally))
 
 ggpairs(df_samp,
   lower = list(continuous = wrap("points", shape = I('.'))), 
-  upper = list(combo = wrap("box", outlier.shape = I('.'))))
+  upper = list(combo = wrap("box", outlier.shape = I('.')))) +
+  theme(
+    axis.ticks = element_blank(),
+    axis.text = element_blank()
+  ) 
 
 summary(df$ratio_monthly_loan_payment)
 ```
