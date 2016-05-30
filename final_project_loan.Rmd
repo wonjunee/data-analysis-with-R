@@ -953,13 +953,15 @@ ggplot(aes(x=ProsperScore,y=BorrowerRate), data=subset(df,!is.na(ProsperScore)))
 
 ### Description Two
 
-These 3 graphs show that ProsperScore, BorrowerRate and CreditScore are somewhat correlated. There are negative correlations between ProsperScore and BorrowerRate and between CreditScore and BorrowerRate. And there is a positive correlation between CreditScore and ProsperScore.
+This graph shows that ProsperScore and BorrowerRate are negatively correlated. As the box plot shows the median values decrease as the ProsperScore increases.
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
 ggplot(aes(x=ProsperScore,y=BorrowerRate,color=StatedMonthlyIncome.bucket), 
-       data=df) +
+       data=subset(df,!is.na(ProsperScore))) +
   geom_jitter(alpha=.5, size=2) +
+  labs(title="Monthly Income") +
+  scale_color_brewer(type='seq') +
   ggtitle("ProsperScore vs. BorrowerRate colored by Monthly Income")
 ```
 
@@ -975,15 +977,6 @@ This graph shows the that people with good ProsperScore and low BorrowerRate hav
 There are total 113937 records with 81 variables in the data. I first filtered out the variables with too many NA values. Then, I analyzed each variable by creating a histogram and try to find variables that are important to this data set. There are some variables that got my attention: BorrowerRate, BorrowerAPR, CreditScore, ProsperScore, etc. I put the most emphasis on ProsperScore because according to the description of the data set, ProsperScore indicates the risk of repaying loans where 10 means the lowest risk and 0 means the highest risk. Since there are total 81 variables in the data set there are so many interesting variables I wanted to investigate further such as listing category that indicates the types of loan and BorrowerState that indicates the state of the address of the borrower. However, I decided to focus on finding the variables that affect the ProsperScore.
 
 During the investigation, I created 6 more variables to the data: BorrowerAPR.bucket, EstimatedReturn.bucket, ProsperScore.numeric, CreditScoreRangeMid, ratio monthly loan payment and ratio monthly loan payment.bucket. I used BorrowerAPR and BorrowerRate interchageably because they are almost the same.
-
-```{r echo=FALSE, BorrowerAPR_Rate, Warning=FALSE}
-ggplot(aes(x=BorrowerRate, y=BorrowerAPR), data=df) +
-  geom_point() + ggtitle("BorrowerRate vs. BorrowerAPR")
-
-cor.test(df$BorrowerRate,df$BorrowerAPR)
-```
-
-As the above plot and calculation indicate, the correlation is very close to 1. I used BorrowerAPR for bucket in order to use it in multivariate analysis.
 
 While the univariate analysis provides me which variables would be interesting to use, bivariate analysis provides the relationship between pairs of data variables I chose to use. One interesting I found during the analysis was that people who have good ProsperScore tends to have low BorrowerRate and high credit score. And people who pay their loans using higher ratio to their monthly income usually have middle range of credit scores and prosper scores. Those with high credit scores and prosper scores don't use high ratio. Later investigation showed that although people with high ratio and with low ratio pay similar amounts of loan payments those with high prosper score usually have higher monthly income. So, people with high income and high prosper score not neccessarily pay more loans.
 
