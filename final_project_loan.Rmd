@@ -739,7 +739,7 @@ The StatedMonthlyIncome is cutted into 9 intervals.
 ggplot(aes(x=ProsperScore,y=BorrowerRate,color=StatedMonthlyIncome.bucket), 
        data=df) +
   geom_jitter(alpha=.5, size=2) +
-  scale_color_brewer(type='seq') +
+  scale_color_brewer(scale_color_brewer(labels=c("$0-$3000", "$1000-$2000", "$2000-$3000", "$3000-$4000", "$4000-$5000", "$5000-$6000", "$6000-$7000", "$7000-$8000", ">$8000"), type='seq') +
   ggtitle("ProsperScore vs. BorrowerRate colored by Monthly Income")
 ```
 
@@ -961,7 +961,6 @@ ggplot(aes(x=ProsperScore,y=BorrowerRate,color=StatedMonthlyIncome.bucket),
        data=subset(df,!is.na(ProsperScore))) +
   geom_jitter(alpha=.5, size=2) +
   labs(title="Monthly Income") +
-  scale_color_manual(labels=c("$0-$3000", "$1000-$2000", "$2000-$3000", "$3000-$4000", "$4000-$5000", "$5000-$6000", "$6000-$7000", "$7000-$8000", ">$8000")) +
   scale_color_brewer(labels=c("$0-$3000", "$1000-$2000", "$2000-$3000", "$3000-$4000", "$4000-$5000", "$5000-$6000", "$6000-$7000", "$7000-$8000", ">$8000"), type='seq') +
   ggtitle("ProsperScore vs. BorrowerRate colored by Monthly Income")
 ```
