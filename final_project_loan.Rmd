@@ -137,6 +137,7 @@ The graph is drawn after Estimated Return is filtered (more than 0 and less than
 ```{r echo=FALSE, ProsperScoreHistogram}
 ggplot(aes(x=ProsperScore), data=df) +
   geom_histogram(binwidth=.5) +
+  scale_x_continuous(breaks =seq(1,11)) +
   ggtitle("ProsperScore Histogram")
 
 table(df$ProsperScore)
@@ -933,8 +934,8 @@ R-squared was 0.909 at first. When more variables are added to the model, it get
 
 ### Plot One
 ```{r echo=FALSE, Plot_One}
-ggplot(aes(x=ProsperScore.numeric), data=df) +
-  geom_histogram(binwidth=.5) +
+ggplot(aes(x=ProsperScore), data=subset(df, !is.na(ProsperScore))) +
+  geom_bar() +
   ggtitle("ProsperScore Histogram")
 ```
 
@@ -948,18 +949,6 @@ ggplot(aes(x=ProsperScore,y=BorrowerRate), data=subset(df,!is.na(ProsperScore)))
   geom_jitter(alpha=0.01,size=2) +
   geom_boxplot() +
   ggtitle("ProsperScore vs. BorrowerRate")
-
-ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), 
-       data=subset(df,CreditScoreRangeMid>300)) +
-  geom_point(alpha=0.01,size=2) +
-  ggtitle("CreditScoreRangeMid vs. BorrowerRate")
-
-ggplot(aes(x=ProsperScore,y=CreditScoreRangeMid), 
-       data=subset(df,CreditScoreRangeMid>300 &
-                     !is.na(ProsperScore))) +
-  geom_jitter(alpha=0.01,size=2) +
-  geom_boxplot() +
-  ggtitle("ProsperScore vs. CreditScoreRangeMid")
 ```
 
 ### Description Two
