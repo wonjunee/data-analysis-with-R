@@ -87,7 +87,7 @@ The graphs are similar to each other. Right skewed graph with an abnormal peak a
 
 ### Borrower Rate
 
-Without the high peak around at .36 the histogram is almost a right skewed graph. According to the graph, there is a very popular APR near at .36. Let's find the exact value of it.
+Without the high peak around at .36 the histogram is almost a right skewed graph. According to the graph, there is a very popular Rate near at .36. Let's find the exact value of it.
 
 ```{r echo=FALSE, Find_the_most_popular_interest_rates}
 # Finding the most frequently used BorrowerRate
@@ -97,10 +97,10 @@ df %>%
   arrange(desc(Count))
 ```
 
-.3177 is the most popular APR being applied.
+.3177 is the most popular Rate being applied.
 Cutting the variable and using it as a factored variable might be more useful.
 
-```{r echo=FALSE, Cutting_APR}
+```{r echo=FALSE, Cutting_Rate}
 # Cut BorrowerRate variable and Summarize it
 df$BorrowerRate.bucket <- cut(df$BorrowerRate,breaks=10)
 table(df$BorrowerRate.bucket)
@@ -286,14 +286,14 @@ ggplot(aes(x=StatedMonthlyIncome), data=subset(df,StatedMonthlyIncome<20000)) +
 
 The histogram of StatedMonthlyIncome looks right skewed but it doesn't look very good because the counts are not continuously shaped.
 
-```{r echo=FALSE, MonthlyIncome_continued}
+```{r echo=FALSE, MonthlyIncome_continued_2}
 # Plot histogram for StatedMonthlyIncome variable less than 20,000
 # and apply sqrt to y axis
 ggplot(aes(x=StatedMonthlyIncome), 
        data=subset(df,
                    StatedMonthlyIncome<20000)) +
   geom_histogram(bins = 100) +
-  scale_y_sqrt() +
+  scale_y_log10() +
   ggtitle("StatedMonthlyIncome Histogram")
 
 # Filter StatedMonthlyIncome by 99% and summarize it
@@ -302,7 +302,7 @@ df %>%
   summarise(n=n())
 ```
 
-After applying sqrt to y axis, the graph now looks better.
+After applying log10 to y axis, the graph now looks better.
 There are 1140 people with monthly income greater than 20526.67. Most of the people's income is around at 4667.
 
 ### MonthlyLoanPayment
@@ -342,7 +342,7 @@ summary(df$ratio_monthly_loan_payment.bucket)
 
 There are only 582 number of observations that are larger than 0.5.
 
-```{r}
+```{r echo=FALSE, ratio_histogram_filtered}
 # Plot the histogram for ratio_monthly_loan_payment less than 0.5
 ggplot(aes(x=ratio_monthly_loan_payment), data=subset(df,ratio_monthly_loan_payment<.5)) +
   geom_histogram(bins=100) +
@@ -383,7 +383,7 @@ People have different interest rates, monthly income, monthly loan payment, etc.
 
 ### Did you create any new variables from existing variables in the dataset?
 
-I created several new variables: BorrowerAPR.bucket, EstimatedReturn.bucket, CreditScoreRangeMid and ratio monthly loan payment. BorrowerAPR.bucket and EstimatedReturn.bucket are divided into intervals so that it can be used as factor variables. CreditScoreRangeMid is the average of CreditScoreRangeLower and CreditScoreRangeUpper. Ratio monthly loan payment is the ratio of monthly loan to monthly income.  
+I created several new variables: BorrowerRate.bucket, EstimatedReturn.bucket, CreditScoreRangeMid and ratio monthly loan payment. BorrowerRate.bucket and EstimatedReturn.bucket are divided into intervals so that it can be used as factor variables. CreditScoreRangeMid is the average of CreditScoreRangeLower and CreditScoreRangeUpper. Ratio monthly loan payment is the ratio of monthly loan to monthly income.  
 
 
 
@@ -616,7 +616,6 @@ ggplot(aes(x=ProsperScore,y=CreditScoreRangeMid),
                      CreditScoreRangeMid > 300 &
                      !is.na(ProsperScore))) +
   geom_jitter(alpha=.05, size=2) +
-  geom_boxplot() +
   ggtitle("ProsperScore vs. CreditScoreRangeMid")
 ```
 
@@ -771,7 +770,7 @@ ggplot(aes(x=CreditScoreRangeMid,y=ratio_monthly_loan_payment,color=ProsperScore
   scale_color_brewer(type='seq') +
   theme_dark() +
   facet_wrap(~BorrowerRate.bucket) +
-  ggtitle("Facet Wrap by Borrower APR")
+  ggtitle("Facet Wrap by Borrower Rate")
 ```
 
 I plotted ratio monthly loan payment of credit score for each BorrowerRate bucket. Good prosper scores can be found in the range of 0.0571 to 0.108 of a borrower rate. And they also have a good credit scores. As the borrower rate increases, the prosper score and credit score decrease.
@@ -789,7 +788,7 @@ ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore.bucket),
 
 The line with the largest slope mainly contains low prosper scores. Note that those with ProsperScore of 11 usually are on the lines that have slope of 1/30 or 1/50.
 
-```{r echo=FALSE, LoanAmt_LoanPmt_ProsperScore_APR}
+```{r echo=FALSE, LoanAmt_LoanPmt_ProsperScore_Rate}
 # Facet Wrapped by BorrowerRate
 ggplot(aes(x=LoanOriginalAmount,y=MonthlyLoanPayment,color=ProsperScore.bucket),
        data=subset(df,!is.na(ProsperScore))) +
