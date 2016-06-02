@@ -411,13 +411,13 @@ names(df_samp)
 suppressWarnings(library(GGally))
 
 # Plot ggpairs
-# ggpairs(df_samp,
-#  lower = list(continuous = wrap("points", shape = I('.'))), 
-#  upper = list(combo = wrap("box", outlier.shape = I('.')))) +
-#  theme(
-#    axis.ticks = element_blank(),
-#    axis.text = element_blank()
-#  ) 
+ggpairs(df_samp,
+  lower = list(continuous = wrap("points", shape = I('.'))), 
+  upper = list(combo = wrap("box", outlier.shape = I('.')))) +
+  theme(
+    axis.ticks = element_blank(),
+    axis.text = element_blank()
+  ) 
 ```
 
 According to the matrix, BorrowerRate and Estimated return are positively correlated. And there is interesting thing going on with ProsperScore and BorrowerRate. There is strong positive correlation between LoanOriginalAmount and Monthly Loan Payment.
