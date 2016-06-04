@@ -558,11 +558,7 @@ As a result, these two variables have very high values of R^2 and correlation. T
 ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), data=df) +
   geom_point() +
   ggtitle("BorrowerRate vs. ratio_monthly_loan_payment")
-```
 
-Due to huge outlier in ratio monthly loan payment variable, the graphs in the matrix don't provide good information.
-
-```{r echo=FALSE, Rate_vs_Ratio_More}
 # Scatter plot between BorrowerRate and ratio_monthly_loan_payment
 ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate), 
        data=subset(df,
@@ -572,6 +568,7 @@ ggplot(aes(y=ratio_monthly_loan_payment,x=BorrowerRate),
   ggtitle("BorrowerRate vs. ratio_monthly_loan_payment (jitter plot)")
 ```
 
+Due to huge outlier in ratio monthly loan payment variable, the graphs in the matrix don't provide good information.
 Outliers are removed and alpha is set to 0.1 and the data is subsetted to get a better graph.
 
 ```{r echo=FALSE, Return_vs_Ratio}
