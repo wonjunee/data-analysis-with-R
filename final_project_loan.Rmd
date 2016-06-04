@@ -363,10 +363,6 @@ ggplot(aes(x=LoanOriginalAmount), data=df) +
 # Univariate Analysis
 
 ### What is the structure of your dataset?
-```{r echo=FALSE, StructureOfData}
-# Structure of the dataset
-str(df)
-```
 
 There are 113937 observations and 86 variables.
 There are a lot of factor variables and below is a list of factor variables I will use for the further analysis.
