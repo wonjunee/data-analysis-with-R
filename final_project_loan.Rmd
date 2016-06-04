@@ -31,7 +31,8 @@ str(df)
 ```
 
 There are 81 variables with 113937 observations.
-Plotting a histogram for each variable will be helpful in understanding the data set. I will only use variables that are not factors.
+Plotting a histogram for each variable will be helpful in understanding the data set.
+However, there are so many variables so I need to filter them out before beginning the univariate analysis.
 
 ### Finding good variables
 ```{r echo=FALSE, FINDING_VARIABLES}
@@ -40,6 +41,7 @@ library(dplyr)
 colSums(is.na(df))
 ```
 
+This result shows the number of NAs for each variable.
 This will help me filter out variables with too many NA's.
 
 ### Term
