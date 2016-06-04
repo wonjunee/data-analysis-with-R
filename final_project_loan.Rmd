@@ -570,7 +570,7 @@ plot2 <-
     ggtitle("BorrowerRate vs. ratio_monthly_loan_payment (jitter plot)")
 
 # Plot histograms
-grid.arrange(plot1, plot2, ncol)
+grid.arrange(plot1, plot2, ncol=1)
 ```
 
 Due to huge outlier in ratio monthly loan payment variable, the graphs in the matrix don't provide good information.
