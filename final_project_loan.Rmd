@@ -235,21 +235,21 @@ plot2 <-
     geom_histogram(bins=100) +
     ggtitle("CreditScoreRangeUpper Histogram")
 
-# Plot histograms
-grid.arrange(plot1, plot2, ncol=1)
-```
-
-These two histograms are very similar. Instead of using these 2 variables, I will create a new variable 'CreditScoreRangeMid' that is the average of these 2.
-
-```{r echo=FALSE, Creating_new_variable_CreditScoreMid}
 # Creating a new variable
 df$CreditScoreRangeMid <- (df$CreditScoreRangeLower + df$CreditScoreRangeUpper) /2
 
 # Plot histogram for CreditScoreRangeMid with 100 bins
-ggplot(aes(x=df$CreditScoreRangeMid), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("CreditScoreRangeMid Histogram")
+plot3 <-
+  ggplot(aes(x=df$CreditScoreRangeMid), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("CreditScoreRangeMid Histogram")
+
+# Plot histograms
+grid.arrange(plot1, plot2, plot3, ncol=1)
 ```
+
+These two histograms are very similar. 
+Instead of using these 2 variables, I created a new variable 'CreditScoreRangeMid' that is the average of these 2.
 
 ### CurrentCreditLines, OpenCreditLines, TotalCreditLinespast7years
 
@@ -614,10 +614,7 @@ plot1 <-
          data=subset(df,
                      ratio_monthly_loan_payment<=0.5)) +
     geom_jitter(alpha=.05, size=2) +
-    theme(axis.text.x = element_text(
-                                    angle = 90, 
-                                    hjust = 1
-                                    )) +
+    theme(axis.text.x = element_blank()) +
     ggtitle("LoanStatus vs. ratio_monthly_loan_payment")
 
 # Jitter plot between LoanStatus and StatedMonthlyIncome excluding outliers.
@@ -626,10 +623,7 @@ plot2 <-
          data=subset(df,
                      StatedMonthlyIncome<50000)) +
     geom_jitter(alpha=.05, size=2) +
-    theme(axis.text.x = element_text(
-                                    angle = 90, 
-                                    hjust = 1
-                                    )) +
+    theme(axis.text.x = element_blank()) +
     ggtitle("LoanStatus vs. StatedMonthlyIncome (filtered by income<50000)")
 
 # Jitter plot between LoanStatus and BorrowerRate
