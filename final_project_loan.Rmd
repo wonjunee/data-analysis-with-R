@@ -1168,36 +1168,30 @@ This graph shows that ProsperScore and BorrowerRate are negatively correlated. A
 ```{r echo=FALSE, Plot_Three}
 # Jitter plot between ProsperScore and CreditScoreRangeMid
 # Colored by StatedMonthlyIncome
+library(scales)
 ggplot(
         aes(
-          x=ProsperScore.numeric,
-          y=CreditScoreRangeMid,
-          color=StatedMonthlyIncome.bucket
+          x=CreditScoreRangeMid,
+          y=StatedMonthlyIncome,
+          color=ProsperScore.numeric
           ), 
-        data=subset(df,!is.na(ProsperScore))
+        data=subset(df,
+                    !is.na(ProsperScore) &
+                    StatedMonthlyIncome<50000
+                    )
       ) +
-  geom_jitter(alpha=.5, size=2) +
-  geom_smooth() +
-  scale_x_continuous(breaks=seq(1,11)) +
-  scale_color_brewer(labels=c("$0-$3000", 
-                              "$1000-$2000", 
-                              "$2000-$3000", 
-                              "$3000-$4000", 
-                              "$4000-$5000", 
-                              "$5000-$6000", 
-                              "$6000-$7000", 
-                              "$7000-$8000", 
-                              ">$8000"), 
-                     type='seq') +
+  geom_jitter(size=2) +
+  geom_smooth(color="red") +
+  scale_colour_gradient2(low="white", high=muted("blue")) +
   theme_dark() +
-  labs(x="ProsperScore", colour = "Monthly Income") +
-  ggtitle("ProsperScore vs. CreditScoreRangeMid colored by Monthly Income")
+  labs(colour = "ProsperScore") +
+  ggtitle("CreditScoreRangeMid vs. Monthly Income colored by ProsperScore")
 ```
 
 ### Description Three
 
 Through this graph, the linear model can be constructed using ProsperScore, CreditScore and Monthly Income.
-This graph shows the that people with good ProsperScore and CreditScore have large monthly income and people with bad ProsperScore and CreditScore have low monthly income. Note that at prosperScore less than 5 the smooth line of $0-$3000 is above the others but when the prosper score is greater than 7 the line is at the bottom. 
+This graph shows the that people with good ProsperScore and CreditScore have large monthly income and people with bad ProsperScore and CreditScore have low monthly income. Note the smooth line keeps increasing as the Credit Score increases.
 
 ------
 
