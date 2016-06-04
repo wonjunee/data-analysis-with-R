@@ -65,24 +65,33 @@ Now the plot shows only 3 values on the x-axis: 12, 36 and 60. Term variable wil
 ### Borrower Rate, Borrower APR, Lender Yield, EstimatedEffectiveYield
 ```{r echo=FALSE, INTEREST_RATES}
 # Plot histogram for BorrowerAPR
-ggplot(aes(x=BorrowerAPR), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("BorrowerAPR Histogram")
+plot1 <- 
+  ggplot(aes(x=BorrowerAPR), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("BorrowerAPR Histogram")
 
 # Plot histogram for BorrowerRate
-ggplot(aes(x=BorrowerRate), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("BorrowerRate Histogram")
+plot2 <-  
+  ggplot(aes(x=BorrowerRate), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("BorrowerRate Histogram")
 
 # Plot histogram for LenderYield
-ggplot(aes(x=LenderYield), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("LenderYield Histogram")
+plot3 <-
+  ggplot(aes(x=LenderYield), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("LenderYield Histogram")
 
 # Plot histogram for EstimatedEffectiveYield
-ggplot(aes(x=EstimatedEffectiveYield), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("EstimatedEffectiveYield Histogram")
+plot4 <-
+  ggplot(aes(x=EstimatedEffectiveYield), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("EstimatedEffectiveYield Histogram")
+
+# Plot 4 histograms
+# install.packages("gridExtra")
+library(gridExtra)
+grid.arrange(plot1,plot2,plot3,plot4, ncol=1)
 ```
 
 The graphs are similar to each other. Right skewed graph with an abnormal peak at the right. I will only use Borrower Rate for convenience.
@@ -111,20 +120,22 @@ table(df$BorrowerRate.bucket)
 ### Estimated Return
 ```{r echo=FALSE, EstimatedReturnHistogram}
 # Plot the histogram for EstimatedReturn 30 bins
-ggplot(aes(x=EstimatedReturn), data=df) +
-  geom_histogram(bins=30) +
-  ggtitle("EstimatedReturn Histogram")
+plot1 <-
+  ggplot(aes(x=EstimatedReturn), data=df) +
+    geom_histogram(bins=30) +
+    ggtitle("EstimatedReturn Histogram")
+
+# Plot the histogram for EstimatedReturn with 100 bins
+plot2 <-
+  ggplot(aes(x=EstimatedReturn), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("EstimatedReturn Histogram with More bins")
+
+# Graph two histograms
+grid.arrange(plot1,plot2, ncol=1)
 ```
 
 This looks a right skewed graph with outliers less than 0.0.
-
-```{r echo=FALSE, With_more_bins}
-# Plot the histogram for EstimatedReturn with 100 bins
-ggplot(aes(x=EstimatedReturn), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("EstimatedReturn Histogram with More bins")
-```
-
 The graph with more bins shows clear outliers with negative values and more than 0.2.
 
 ```{r echo=FALSE, Investigating_Return}
@@ -140,15 +151,30 @@ There are 176 observations less than 0.0 and 80 observations more than 0.2.
 
 ```{r echo=FALSE, Filtered_histogram}
 # Take out outliers and replot the histogram
-ggplot(aes(x=EstimatedReturn), 
+plot1 <-
+  ggplot(aes(x=EstimatedReturn), 
        data=subset(df,
-                  df$EstimatedReturn>0 & 
+                  df$EstimatedReturn>.01 & 
                   df$EstimatedReturn<0.2)) +
-  geom_histogram(bins=50) +
-  ggtitle("EstimatedReturn Histogram (Filtered)")
+    geom_histogram(bins=50) +
+    ggtitle("EstimatedReturn Histogram (Filtered)")
+
+# log10 scaling
+plot2 <-
+  ggplot(aes(x=EstimatedReturn), 
+       data=subset(df,
+                  df$EstimatedReturn>.01 & 
+                  df$EstimatedReturn<0.2)) +
+    geom_histogram(bins=50) +
+    scale_x_log10() +
+    ggtitle("EstimatedReturn Histogram (Scaled)")
+
+# Plot histograms
+grid.arrange(plot1, plot2, ncol = 1)
 ```
 
-The graph is drawn after Estimated Return is filtered (more than 0 and less than 0.2). Similar to the previous variables, there is a peak at the right.
+The graph is drawn after Estimated Return is filtered (more than 0.01 and less than 0.2). Similar to the previous variables, there is a peak at the right.
+After applying the log10 scale, bimodal histogram can be seen.
 
 ### Prosper Score
 ```{r echo=FALSE, Factoring_variable}
@@ -176,34 +202,41 @@ Prosper score is ranging from 1 to 11. Most of them are NAs. We can assume them 
 ### Employment Status Duration
 ```{r echo=FALSE, EmploymentStatusDurationHistogram}
 # Plot histogram for EmploymentStatusDuration with 100 bins
-ggplot(aes(x=EmploymentStatusDuration), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("EmploymentStatusDuration Histogram")
+plot1 <-
+  ggplot(aes(x=EmploymentStatusDuration), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("EmploymentStatusDuration Histogram")
+
+# Plot histogram for EmploymentStatusDurationwith square rooted x axis
+plot2 <-
+  ggplot(aes(x=EmploymentStatusDuration), data=df) +
+    geom_histogram(bins=100) +
+    scale_x_sqrt() +
+    ggtitle("EmploymentStatusDuration Histogram (Square Rooted)")
+
+# Plot histograms
+grid.arrange(plot1, plot2, ncol=1)
 ```
 
 This is very nice looking right skewed graph without a peak at the right.
-
-```{r echo=FALSE, Square_rooted}
-# Plot histogram for EmploymentStatusDurationwith square rooted x axis
-ggplot(aes(x=EmploymentStatusDuration), data=df) +
-  geom_histogram(bins=100) +
-  scale_x_sqrt() +
-  ggtitle("EmploymentStatusDuration Histogram (Square Rooted)")
-```
-
 Square root is applied to see a clear right skewed shape.
 
 ### CreditScoreRangeLower and CreditScoreRangeUpper
 ```{r echo=FALSE, CreditScores}
 # Plot histogram for CreditScoreRangeLower with 100 bins
-ggplot(aes(x=CreditScoreRangeLower), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("CreditScoreRangeLower Histogram")
+plot1 <-
+  ggplot(aes(x=CreditScoreRangeLower), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("CreditScoreRangeLower Histogram")
 
 # Plot histogram for CreditScoreRangeUpper with 100 bins
-ggplot(aes(x=CreditScoreRangeUpper), data=df) +
-  geom_histogram(bins=100) +
-  ggtitle("CreditScoreRangeUpper Histogram")
+plot2 <-
+  ggplot(aes(x=CreditScoreRangeUpper), data=df) +
+    geom_histogram(bins=100) +
+    ggtitle("CreditScoreRangeUpper Histogram")
+
+# Plot histograms
+grid.arrange(plot1, plot2, ncol=1)
 ```
 
 These two histograms are very similar. Instead of using these 2 variables, I will create a new variable 'CreditScoreRangeMid' that is the average of these 2.
@@ -222,19 +255,25 @@ ggplot(aes(x=df$CreditScoreRangeMid), data=df) +
 
 ```{r echo=FALSE, CreditLines}
 # Plot histogram for CurrentCreditLines
-ggplot(aes(x=CurrentCreditLines), data=df) +
-  geom_histogram(binwidth=1) +
-  ggtitle("CurrentCreditLines Histogram")
+plot1 <-
+  ggplot(aes(x=CurrentCreditLines), data=df) +
+    geom_histogram(binwidth=1) +
+    ggtitle("CurrentCreditLines Histogram")
 
 # Plot histogram for OpenCreditLines
-ggplot(aes(x=OpenCreditLines), data=df) +
-  geom_histogram(binwidth=1) +
-  ggtitle("OpenCreditLines Histogram")
+plot2 <-
+  ggplot(aes(x=OpenCreditLines), data=df) +
+    geom_histogram(binwidth=1) +
+    ggtitle("OpenCreditLines Histogram")
 
 # Plot histogram for TotalCreditLinespast7years
-ggplot(aes(x=TotalCreditLinespast7years), data=df) +
-  geom_histogram(binwidth=1) +
-  ggtitle("TotalCreditLinespast7years Histogram")
+plot3 <-
+  ggplot(aes(x=TotalCreditLinespast7years), data=df) +
+    geom_histogram(binwidth=1) +
+    ggtitle("TotalCreditLinespast7years Histogram")
+
+# Plot histograms
+grid.arrange(plot1, plot2, plot3, ncol=1)
 ```
 
 These are nice looking right skewed histograms.
@@ -256,25 +295,27 @@ ggplot(aes(x=TotalTrades), data=subset(df,!is.na(TotalTrades))) +
 summary(df$DebtToIncomeRatio)
 
 # Plot histogram for DebtToIncomeRatio without na values
-ggplot(aes(x=DebtToIncomeRatio), 
-       data=subset(df,
-                   !is.na(DebtToIncomeRatio))) +
-  geom_histogram(bins=500) +
-  ggtitle("DebtToIncomeRatio Histogram")
-```
+plot1 <-
+  ggplot(aes(x=DebtToIncomeRatio), 
+         data=subset(df,
+                     !is.na(DebtToIncomeRatio))) +
+    geom_histogram(bins=500) +
+    ggtitle("DebtToIncomeRatio Histogram")
 
-There is an outlier at 10.0.
-
-```{r echo=FALSE, Taking_out_outliers}
 # Plot histogram for DebtToIncomeRatio without na values and outliers
-ggplot(aes(x=DebtToIncomeRatio), 
-       data=subset(df,
-                  !is.na(DebtToIncomeRatio) & 
-                  DebtToIncomeRatio <= 1)) +
-  geom_histogram(bins=200) +
-  ggtitle("DebtToIncomeRatio Histogram")
+plot2 <-
+  ggplot(aes(x=DebtToIncomeRatio), 
+         data=subset(df,
+                    !is.na(DebtToIncomeRatio) & 
+                    DebtToIncomeRatio <= 1)) +
+    geom_histogram(bins=200) +
+    ggtitle("DebtToIncomeRatio Histogram")
+
+# Plot histograms
+grid.arrange(plot1, plot2, ncol=1)
 ```
 
+There is an outlier at 10.0. So outlier is removed and plotted again.
 The graph above shows the Debt to Income Ratio that are less than or equal to 1.
 
 ### StatedMonthlyIncome
@@ -289,25 +330,30 @@ This means that there are large outliers in the data.
 
 ```{r echo=FALSE, MonthlyIncome_continued}
 # Plot histogram for StatedMonthlyIncome variable less than 20,000
-ggplot(aes(x=StatedMonthlyIncome), 
-       data=subset(df,
-                   StatedMonthlyIncome<20000)) +
-  geom_histogram(bins = 100) +
-  ggtitle("StatedMonthlyIncome Histogram")
+plot1 <-
+  ggplot(aes(x=StatedMonthlyIncome), 
+         data=subset(df,
+                     StatedMonthlyIncome<20000)) +
+    geom_histogram(bins = 100) +
+    ggtitle("StatedMonthlyIncome Histogram")
+
+# Plot histogram for StatedMonthlyIncome variable less than 20,000
+# and apply sqrt to y axis
+plot2 <-
+  ggplot(aes(x=StatedMonthlyIncome), 
+         data=subset(df,
+                     StatedMonthlyIncome<20000)) +
+    geom_histogram(bins = 100) +
+    scale_y_log10() +
+    ggtitle("StatedMonthlyIncome Histogram (scale y axis log10)")
+
+# Plot histograms
+grid.arrange(plot1, plot2, ncol=1)
 ```
 
 The histogram of StatedMonthlyIncome looks right skewed but it doesn't look very good because the counts are not continuously shaped.
 
 ```{r echo=FALSE, MonthlyIncome_continued_2}
-# Plot histogram for StatedMonthlyIncome variable less than 20,000
-# and apply sqrt to y axis
-ggplot(aes(x=StatedMonthlyIncome), 
-       data=subset(df,
-                   StatedMonthlyIncome<20000)) +
-  geom_histogram(bins = 100) +
-  scale_y_log10() +
-  ggtitle("StatedMonthlyIncome Histogram")
-
 # Filter StatedMonthlyIncome by 99% and summarize it
 df %>%
   filter(StatedMonthlyIncome>quantile(df$StatedMonthlyIncome,0.99)) %>%
@@ -329,7 +375,7 @@ ggplot(aes(x=MonthlyLoanPayment), data=df) +
 ```
 
 
-### New Variable
+### New Variable: ratio of monthly loan payment to monthly income
 
 ```{r echo=FALSE, Creating_new_variable}
 # Creating new variable. If the denominator is zero then ratio is 0.
@@ -439,19 +485,21 @@ According to the matrix, BorrowerRate and Estimated return are positively correl
 
 ```{r echo=FALSE, Score_vs_Rate}
 # Plot a scatter plot between CreditScoreRangeMid and BorrowerRates
-ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), data=df) +
-  geom_point(alpha=0.01,size=2) +
-  ggtitle("CreditsScoreRangeMid vs. BorrowerRate")
-```
+plot1 <-
+  ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), data=df) +
+    geom_jitter(alpha=0.01,size=2) +
+    ggtitle("CreditsScoreRangeMid vs. BorrowerRate")
 
-As expected, Credit Score and BorrowerRate are negatively correlated.
+# Plot a scatter plot between CreditScoreRangeMid and BorrowerRates 
+# filtered on CreditScoreRangeMid greater than 300
+plot2 <-
+  ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), 
+         data=subset(df,CreditScoreRangeMid>300)) +
+    geom_jitter(alpha=0.01,size=2) +
+    ggtitle("CreditScoreRangeMid vs. BorrowerRate")
 
-```{r echo=FALSE, Rate_vs_Score_CorTest}
-# Plot a scatter plot between CreditScoreRangeMid and BorrowerRates filtered on CreditScoreRangeMid greater than 300
-ggplot(aes(y=BorrowerRate,x=CreditScoreRangeMid), 
-       data=subset(df,CreditScoreRangeMid>300)) +
-  geom_jitter(alpha=0.01,size=2) +
-  ggtitle("CreditScoreRangeMid vs. BorrowerRate")
+# Plot histograms
+grid.arrange(plot1, plot2, ncol=1)
 
 # Correlation test between CreditScoreRangeMid and BorrowerRate
 tmp <- subset(df,CreditScoreRangeMid>400)
@@ -460,21 +508,26 @@ cor.test(tmp$BorrowerRate,
          type='pearson')
 ```
 
+As expected, Credit Score and BorrowerRate are negatively correlated.
 Outliers are removed. Correlation test shows a moderate value of negative correlation.
 
 ```{r echo=FALSE, Score_vs_Rate_Filtered}
 # Plot a scatter plot between ProsperScore and BorrowerRate
-ggplot(aes(x=ProsperScore,y=BorrowerRate), data=df) +
-  geom_boxplot() +
-  ggtitle("ProsperScore vs. BorrowerRate")
+plot1 <-
+  ggplot(aes(x=ProsperScore,y=BorrowerRate), data=df) +
+    geom_boxplot() +
+    ggtitle("ProsperScore vs. BorrowerRate")
 
 # Plot a scatter plot between ProsperScore and BorrowerRate without NA values
-ggplot(aes(x=ProsperScore,y=BorrowerRate), 
-       data=subset(df,
-                   !is.na(ProsperScore))) +
-  geom_boxplot() +
-  ggtitle("ProsperScore vs. BorrowerRate without NA")
+plot2 <-
+  ggplot(aes(x=ProsperScore,y=BorrowerRate), 
+         data=subset(df,
+                     !is.na(ProsperScore))) +
+    geom_boxplot() +
+    ggtitle("ProsperScore vs. BorrowerRate without NA")
 
+# Plot histograms
+grid.arrange(plot1, plot2, ncol=1)
 ```
 
 NA values in ProsperScore can be ignored. And a clear pattern can be observed in this box plot. As score gets higher, borrower rate gets lower.
